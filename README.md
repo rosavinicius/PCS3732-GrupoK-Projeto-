@@ -41,12 +41,15 @@ Projetar e construir um sistema automatizado de irrigação de solo que utilize 
 | Código | Nome do Requisito | Tipo | Descrição |
 | :--- | :--- | :--- | :--- |
 | **RF-1** | Monitoramento da Umidade do Solo | Funcional | O sistema deve realizar leituras periódicas do sensor de umidade para determinar o estado hídrico do solo. |
-| **RF-2** | Irrigação Automática | Funcional | O sistema deve acionar automaticamente a bomba de água quando a umidade medida estiver abaixo de um limiar configurado. |
-| **RF-3** | Visualização do Estado do Sistema | Funcional | O sistema deve disponibilizar ao usuário informações como nível de umidade, estado da bomba e histórico recente de leituras por meio de uma interface web ou display. |
-| **RF-4** | Visualização de Série Temporal | Funcional | O sistema deve disponibilizar a série temporal das leituras em forma gráfica. |
+| **RF-2** | Monitoramento da Temperatura | Funcional | O sistema deve realizar leituras periódicas do sensor de temperatura. |
+| **RF-3** | Definição de Limiar para Irrigação | Funcional | O sistema deve possibilitar que o usuário defina o limiar para irrigação. |
+| **RF-4** | Irrigação Automática | Funcional | O sistema deve acionar automaticamente a bomba de água quando a umidade medida estiver abaixo de um limiar configurado. |
+| **RF-5** | Visualização do Estado do Sistema | Funcional | O sistema deve disponibilizar ao usuário informações como nível de umidade, estado da bomba e histórico recente de leituras por meio de uma interface web ou display. |
+| **RF-6** | Visualização de Série Temporal | Funcional | O sistema deve disponibilizar a série temporal das leituras em forma gráfica. |
 | **RNF-1** | Tempo de Resposta | Não Funcional (Eficiência de Desempenho) | O sistema deve acionar a irrigação em até 5 segundos após detectar um nível de umidade inferior ao limiar configurado. |
 | **RNF-2** | Confiabilidade Operacional | Não Funcional (Confiabilidade) | O sistema deve operar continuamente durante períodos prolongados sem falhas de leitura ou acionamento indevido da bomba. |
 | **RNF-3** | Facilidade de Configuração | Não Funcional (Usabilidade) | O usuário deve conseguir alterar parâmetros como limiar de umidade e intervalo de amostragem sem necessidade de modificar o código-fonte. |
+| **RNF-4** | Capacidade de expansão | Não Funcional (Escalabilidade) | O sistema deve ser capaz de ser expandido para acomodar novos módulos de irrigação. |
 
 ---
 
@@ -58,9 +61,11 @@ O hardware do sistema é centrado no Raspberry Pi 3, que atua como unidade centr
 graph TD
     Subgraph1[Solo / Planta]
     Sensor[Sensor de Umidade do Solo] -->|Sinal Analógico| ADC[ADC]
-    ADC --> Raspberry[Raspberry Pi 3]
-    Raspberry -->|Wi-Fi| HTML[Interface gráfica HTML]
-    Raspberry -->|Sinal de Controle| Controller[Controlador de vazão]
+    ADC --> ESP[ESP32]
+    ESP --> |Dados| Raspberry[Raspberry Pi 3]
+    Raspberry --> |Limiar| ESP
+    Raspberry --> |Wi-Fi| HTML[Interface gráfica HTML]
+    ESP -->|Sinal de Controle| Controller[Controlador de vazão]
     Controller --> Transistor[Transistor]
     VCC((VCC)) --> Transistor
     Transistor --> Pump[Mini Bomba de Água]
