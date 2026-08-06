@@ -1,0 +1,57 @@
+# Alternativa containerizada aos serviços systemd (infra/systemd/).
+# Roda o broker MQTT + backend em containers no Raspberry Pi.
+# O dashboard (frontend) normalmente é servido separado (ex: Vite build +
+# Nginx, ou até fora do Pi); descomente o serviço "dashboard" se quiser
+# servir o build estático também via Docker.
+#
+# Uso:
+#   docker compose -f infra/docker-compose.yml up -d
+#   docker compose -f infra/docker-compose.yml logs -f backend
+
+version: "3.8"
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: irrigador-mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mosquitto-data:/mosquitto/data
+      - mosquitto-log:/mosquitto/log
+      # arquivo de senhas gerado com: mosquitto_passwd -c passwd irrigador
+      - ./mosquitto/passwd:/mosquitto/config/passwd:ro
+
+  backend:
+    build:
+      context: ../backend
+    container_name: irrigador-backend
+    restart: unless-stopped
+    depends_on:
+      - mosquitto
+    ports:
+      - "3000:3000"
+    environment:
+      MQTT_BROKER_HOST: mosquitto
+      MQTT_BROKER_PORT: 1883
+    env_file:
+      - ../backend/.env
+    volumes:
+      - backend-db:/app/data
+
+  # dashboard:
+  #   build:
+  #     context: ../dashboard
+  #   container_name: irrigador-dashboard
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - backend
+  #   ports:
+  #     - "8080:80"
+
+volumes:
+  mosquitto-data:
+  mosquitto-log:
+  backend-db:
