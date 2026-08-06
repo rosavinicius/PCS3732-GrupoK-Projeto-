@@ -91,3 +91,9 @@ stateDiagram-v2
     IrrigaSolo --> LeUmidade: Irrigação efetuada
 ```
 <p align="center"><em>Diagrama de transição de estados do projeto</em></p>
+
+---
+
+## 5. Testes
+
+O projeto conta com testes para o backend, conexão de dispositivos e bomba de água. O primeiro cria um banco de dados em memória e testa as rotas; o segundo, checa a criação e listagem dos dispositivos (ESP32's); o terceiro, é um teste unitário que verifica a lógica de funcionamento da bomba para diferentes situações de umidade: abaixo do limiar (bomba deve ligar), entre o intervalo limiar+histerese (bomba deve se manter ligada), e acima da marca limiar+histerese (bomba deve desligar). Além disso, o último teste também simula caso de erro de leitura.   
