@@ -72,18 +72,23 @@ def get_history(plant_id, limit=60):
         st.error(f"Erro ao buscar histórico: {e}")
     return pd.DataFrame()
 
-def set_threshold(device_id, threshold):
+def set_threshold(plant_id, threshold):
     if USE_MOCK_DATA:
-        st.toast(f"✅ Limiar do dispositivo {device_id} alterado para {threshold}% (Mock)")
+        st.toast(f"✅ Limiar da planta {plant_id} alterado para {threshold}% (Mock)")
         return True
     
     try:
-        req = requests.post(f"{API_URL}/devices/{device_id}/config", json={"humidityThreshold": threshold})
-        if req.status_code in [200, 201]:
-            st.toast("✅ Limiar alterado com sucesso na API!")
+        # Agora chamamos a rota definitiva atrelada à PLANTA, não ao dispositivo
+        req = requests.patch(
+            f"{API_URL}/plants/{plant_id}/threshold", 
+            json={"min_moisture": float(threshold)}
+        )
+        
+        if req.status_code == 200:
+            st.toast("✅ Limiar alterado com sucesso na API e enviado para o ESP32!")
             return True
-        elif req.status_code == 404:
-            st.warning("⚠️ Rota POST /devices/{id}/config não encontrada no Backend!")
+        else:
+            st.error(f"Erro na API: {req.text}")
             return False
     except Exception as e:
         st.error(f"Erro de conexão ao salvar: {e}")
