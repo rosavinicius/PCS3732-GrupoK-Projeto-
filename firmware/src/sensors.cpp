@@ -3,6 +3,7 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include "config.h"
+#include <stdint.h>
 
 namespace sensors {
 

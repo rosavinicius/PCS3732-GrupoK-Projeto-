@@ -108,7 +108,6 @@ void publishSensorReading(const sensors::Reading& reading) {
     if (!isnan(reading.temperature)) {
         doc["temperature"] = serialized(String(reading.temperature, 1));
     }
-    doc["ph"] = serialized(String(reading.ph, 1));
     doc["ts"] = (uint64_t)millis(); // o backend normaliza pra timestamp real ao receber
 
     char buf[192];
