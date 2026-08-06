@@ -5,7 +5,7 @@ namespace sensors {
 struct Reading {
     float humidity;     // % (0-100), sensor capacitivo de umidade do solo
     float temperature;  // °C, sonda DS18B20
-    float ph;           // 0-14, sensor analógico de PH
+    uint32_t timestamp;
 };
 
 void begin();

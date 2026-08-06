@@ -72,11 +72,10 @@ void update(const sensors::Reading& reading, float threshold, bool pumpActive, b
 
     oled.printf("Umid: %.0f%%  Alvo: %.0f%%\n", reading.humidity, threshold);
 
-    if (!isnan(reading.temperature)) {
-        oled.printf("Temp: %.1fC   PH: %.1f\n", reading.temperature, reading.ph);
-    } else {
-        oled.printf("Temp: --      PH: %.1f\n", reading.ph);
-    }
+    if (!isnan(reading.temperature))
+        oled.printf("Temp: %.1f C\n", reading.temperature);
+    else
+        oled.println("Temp: --");
 
     oled.printf("Bomba: %s  MQTT: %s\n",
                 pumpActive ? "LIGADA" : "off",

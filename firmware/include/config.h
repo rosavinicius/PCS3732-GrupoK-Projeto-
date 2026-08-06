@@ -3,8 +3,8 @@
 // ---------------------------------------------------------------------------
 // Wi-Fi
 // ---------------------------------------------------------------------------
-#define WIFI_SSID       "SUA_REDE_WIFI"
-#define WIFI_PASSWORD   "SUA_SENHA_WIFI"
+#define WIFI_SSID       "iPhone de bia"
+#define WIFI_PASSWORD   "12345678"
 #define WIFI_RETRY_MS   5000
 
 // ---------------------------------------------------------------------------
@@ -49,11 +49,12 @@
 #define DISPLAY_UPDATE_INTERVAL_MS 1000
 #define DEFAULT_HUMIDITY_THRESHOLD 30.0f  // usado só se nada estiver salvo na flash
 #define PUMP_HYSTERESIS_PERCENT    3.0f   // evita a bomba ligar/desligar em flapping
+#define MAX_PUMP_TIME  60000              // 60 segundos
 
 // Calibração do sensor de umidade capacitivo (ajustar após teste no solo seco/molhado)
 #define SOIL_MOISTURE_RAW_DRY   3000
 #define SOIL_MOISTURE_RAW_WET   1200
 
-// Calibração do sensor de PH (ajustar com soluções buffer 4.0 / 7.0)
-#define PH_VOLTAGE_AT_PH7  1.65f
-#define PH_SLOPE           -5.7f
+// Pump relay: HIGH = ligado, LOW = desligado (inverso do relé)
+#define PUMP_ON_LEVEL  HIGH
+#define PUMP_OFF_LEVEL LOW
