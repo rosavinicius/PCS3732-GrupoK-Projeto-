@@ -55,23 +55,25 @@ Projetar e construir um sistema automatizado de irrigação de solo que utilize 
 
 ## 4. Arquitetura
 
-O hardware do sistema é centrado no Raspberry Pi 3, que atua como unidade central de processamento, conectando sensores, atuadores e a camada de monitoramento do usuário. Sensores de umidade do solo fazem a leitura do nível de água no substrato da planta e enviam o sinal analógico para um conversor analógico-digital, que por sua vez adequa o sinal para ser lido pelos pinos GPIO do Raspberry Pi. Para acionar uma das bombas de água, o Raspberry Pi envia um sinal de controle através do controlador de vazão até a base de um transistor. O transistor funciona como uma chave eletrônica acionada pelo Raspberry, permitindo chavear a corrente da fonte de alimentação (VCC e GND) para ligar/desligar a bomba com segurança sem sobrecarregar a placa. Por fim, os dados são enviados via Wi-Fi para uma interface gráfica, permitindo que o usuário acompanhe o estado do sistema e as leituras remotamente.
+O hardware do sistema é centrado no Raspberry Pi 3, que atua como unidade central de processamento. Nele se conectam módulos de irrigação, compostos por ESP32, sensores e atuadores. O Raspberry recebe dados coletados por cada um dos módulos e os enviam via Wi-Fi para uma interface gráfica, permitindo que o usuário acompanhe o estado do sistema e as leituras remotamente. Por meio da mesma interface é possível definir limiares para irrigação para cada um dos módulos, informação esta que é transmitida pelo Raspberry ao ESP responsável pelo módulo de irrigação adequado. Nos módulos, sensores de umidade do solo e de temperatura fazem a leitura do nível de água no substrato da planta e temperatura e enviam o sinal analógico para um conversor analógico-digital, que por sua vez adequa o sinal para ser lido pelos pinos GPIO do ESP32. Para acionar uma das bombas de água, o ESP envia um sinal de controle através do controlador de vazão até a base de um transistor. O transistor funciona como uma chave eletrônica acionada pelo ESP, permitindo chavear a corrente da fonte de alimentação (VCC e GND) para ligar/desligar a bomba com segurança sem sobrecarregar a placa.
 
 ```mermaid
 graph TD
-    Subgraph1[Solo / Planta]
-    Sensor[Sensor de Umidade do Solo] -->|Sinal Analógico| ADC[ADC]
+    Umidade[Sensor de Umidade do Solo] -->|Sinal Analógico| ADC[ADC]
+    Temperatura[Sensor de Temperatura] -->|Sinal Analógico| ADC[ADC]
     ADC --> ESP[ESP32]
-    ESP --> |Dados| Raspberry[Raspberry Pi 3]
-    Raspberry --> |Limiar| ESP
+    ESP <--> |Dados / Limiar| Raspberry[Raspberry Pi 3]
     Raspberry --> |Wi-Fi| HTML[Interface gráfica HTML]
     ESP -->|Sinal de Controle| Controller[Controlador de vazão]
     Controller --> Transistor[Transistor]
     VCC((VCC)) --> Transistor
     Transistor --> Pump[Mini Bomba de Água]
     Pump --> GND((GND))
-    Pump -->|Água| Subgraph1
-    Subgraph1 -->|Captura de umidade| Sensor
+    Pump -->|Água| Solo[Solo / Planta]
+    Solo -->|Captura de umidade| Umidade
+    ESP2[ESP32] <----> Raspberry
+    invisivel[" "] --> |...| ESP2
+    style invisivel fill:none,stroke:none,color:none;
 ```
 <p align="center"><em>Diagrama de arquitetura do projeto</em></p>
 
