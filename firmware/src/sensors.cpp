@@ -13,6 +13,11 @@ static DallasTemperature tempSensor(&oneWire);
 void begin() {
     analogReadResolution(12); // ESP32: 0-4095
     tempSensor.begin();
+
+    Serial.printf(
+        "[sensors] sensores OneWire encontrados: %d\n",
+        tempSensor.getDeviceCount()
+    );
 }
 
 static float readSoilMoisturePercent() {

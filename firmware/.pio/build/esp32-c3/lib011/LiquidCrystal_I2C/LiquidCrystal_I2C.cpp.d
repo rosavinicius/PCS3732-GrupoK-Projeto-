@@ -1,6 +1,32 @@
-.pio/build/esp32-c3/src/display.cpp.o: src/display.cpp src/display.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp_arduino_version.h \
+.pio/build/esp32-c3/lib011/LiquidCrystal_I2C/LiquidCrystal_I2C.cpp.o: \
+ .pio/libdeps/esp32-c3/LiquidCrystal_I2C/LiquidCrystal_I2C.cpp \
+ .pio/libdeps/esp32-c3/LiquidCrystal_I2C/LiquidCrystal_I2C.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/Print.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/WString.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/pgmspace.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/Printable.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src/Wire.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_system/include/esp_system.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_common/include/esp_err.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_common/include/esp_compiler.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_common/include/esp_attr.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_common/include/esp_bit_defs.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_common/include/esp_idf_version.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_hw_support/include/esp_mac.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_hw_support/include/esp_chip_info.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_hw_support/include/esp_random.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_hw_support/include/esp_sleep.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/hal/include/hal/touch_sensor_types.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/soc/esp32c3/include/soc/soc.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_common/include/esp_assert.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/soc/esp32c3/include/soc/soc_caps.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/hal/include/hal/gpio_types.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/soc/include/soc/gpio_periph.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/soc/esp32c3/include/soc/io_mux_reg.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/soc/esp32c3/include/soc/gpio_struct.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/soc/esp32c3/include/soc/gpio_reg.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/soc/esp32c3/include/soc/gpio_sig_map.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/freertos/include/freertos/FreeRTOS.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/freertos/include/esp_additions/freertos/FreeRTOSConfig.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_common/include/esp_compiler.h \
@@ -14,17 +40,10 @@
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_hw_support/include/soc/cpu.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_hw_support/include/esp_cpu.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/hal/include/hal/cpu_hal.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_common/include/esp_err.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_common/include/esp_compiler.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/soc/esp32c3/include/soc/soc_caps.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/hal/include/hal/cpu_types.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/hal/esp32c3/include/hal/cpu_ll.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/soc/esp32c3/include/soc/dport_access.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_common/include/esp_attr.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_hw_support/include/soc/esp32c3/dport_access.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/soc/esp32c3/include/soc/soc.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_common/include/esp_assert.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_common/include/esp_bit_defs.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/soc/esp32c3/include/soc/uart_reg.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/soc/esp32c3/include/soc/system_reg.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/soc/esp32c3/include/soc/assist_debug_reg.h \
@@ -39,11 +58,6 @@
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_timer/include/esp_timer.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/heap/include/esp_heap_caps.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/heap/include/multi_heap.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_system/include/esp_system.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_common/include/esp_idf_version.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_hw_support/include/esp_mac.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_hw_support/include/esp_chip_info.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_hw_support/include/esp_random.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/newlib/platform_include/esp_newlib.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/freertos/port/riscv/include/freertos/portbenchmark.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/freertos/port/riscv/include/freertos/portmacro_deprecated.h \
@@ -51,18 +65,9 @@
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/freertos/include/freertos/task.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/freertos/include/freertos/list.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/freertos/include/esp_additions/freertos/task_snapshot.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/freertos/include/freertos/semphr.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/freertos/include/freertos/queue.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/freertos/include/freertos/task.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_hw_support/include/esp_sleep.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/hal/include/hal/touch_sensor_types.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/hal/include/hal/gpio_types.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/soc/include/soc/gpio_periph.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/soc/esp32c3/include/soc/io_mux_reg.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/soc/esp32c3/include/soc/gpio_struct.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/soc/esp32c3/include/soc/gpio_reg.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/soc/esp32c3/include/soc/gpio_sig_map.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/freertos/include/freertos/semphr.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/freertos/include/freertos/queue.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/freertos/include/freertos/event_groups.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/freertos/include/freertos/timers.h \
@@ -70,6 +75,7 @@
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/log/include/esp_log.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/log/include/esp_log_internal.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-matrix.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-uart.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/hal/include/hal/uart_types.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-gpio.h \
@@ -91,22 +97,21 @@
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-psram.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-rgb-led.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-cpu.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/Stream.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/Print.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h \
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp_arduino_version.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp8266-compat.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/stdlib_noniso.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/binary.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/WCharacter.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/WString.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/pgmspace.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/Stream.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/Print.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/Printable.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/IPAddress.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/WString.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/Printable.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/Client.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/Server.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/Udp.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/Stream.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/IPAddress.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/HardwareSerial.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/HWCDC.h \
@@ -160,10 +165,4 @@
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/spi_flash/include/esp_spi_flash_counters.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_hw_support/include/soc/esp32/spiram.h \
  C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/io_pin_remap.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h \
- src/sensors.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src/Wire.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
- .pio/libdeps/esp32-c3/LiquidCrystal_I2C/LiquidCrystal_I2C.h \
- C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/Print.h \
- include/config.h
+ C:/Users/bbtav/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h

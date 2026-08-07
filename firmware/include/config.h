@@ -32,17 +32,13 @@
 // Pinos
 // ---------------------------------------------------------------------------
 #define PIN_SOIL_MOISTURE   0   // ADC - sensor capacitivo de umidade do solo
-#define PIN_SOIL_TEMP       4    // OneWire - DS18B20 (sonda de temperatura do solo)
+#define PIN_SOIL_TEMP       3    // OneWire - DS18B20 (sonda de temperatura do solo)
 #define PIN_PUMP_RELAY      5   // saída digital - relé que aciona a bomba
 #define PIN_STATUS_LED      8    // LED onboard, pisca em atividade
 
-// OLED via I2C
-#define OLED_SDA            6
-#define OLED_SCL            7
-
-#define OLED_WIDTH   128
-#define OLED_HEIGHT  64
-#define OLED_ADDR    0x3C
+#define LCD_SDA      6
+#define LCD_SCL      7
+#define LCD_ADDR     0x27
 
 // ---------------------------------------------------------------------------
 // Comportamento

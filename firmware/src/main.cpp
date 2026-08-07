@@ -1,4 +1,5 @@
 #include <Arduino.h>
+
 #include "config.h"
 #include "wifi_manager.h"
 #include "mqtt_client.h"
@@ -14,20 +15,21 @@ static unsigned long lastSensorReadAt = 0;
 static unsigned long lastDisplayUpdateAt = 0;
 
 
-// Inicialização correta da struct
+// Última leitura dos sensores
 static sensors::Reading lastReading = {
-    NAN,  // humidity
-    NAN,  // temperature
-    0     // timestamp
+    NAN,   // humidity
+    NAN,   // temperature
+    0      // timestamp
 };
 
 
 static String deviceId;
 
 
-// Chamado pelo mqtt_client quando o Raspberry envia nova configuração
-static void onConfigReceived(float newThreshold) {
 
+// Recebe configuração enviada pelo Raspberry via MQTT
+static void onConfigReceived(float newThreshold)
+{
     humidityThreshold = newThreshold;
 
     storage::saveHumidityThreshold(newThreshold);
@@ -40,28 +42,37 @@ static void onConfigReceived(float newThreshold) {
 
 
 
-void setup() {
-
+void setup()
+{
     Serial.begin(115200);
-    delay(200);
+    delay(500);
 
 
-    pinMode(PIN_STATUS_LED, OUTPUT);
+    pinMode(
+        PIN_STATUS_LED,
+        OUTPUT
+    );
 
 
-    // Inicializa armazenamento local do ESP32
+    /*
+     * Storage local
+     */
     storage::begin();
 
     humidityThreshold =
         storage::loadHumidityThreshold();
 
+
     Serial.printf(
-        "[main] threshold carregado da flash: %.1f%%\n",
+        "[main] threshold carregado: %.1f%%\n",
         humidityThreshold
     );
 
 
-    // Inicializa módulos
+
+    /*
+     * Hardware local
+     */
     sensors::begin();
 
     pump_control::begin();
@@ -69,11 +80,17 @@ void setup() {
     display::begin();
 
 
-    // WiFi
+
+    /*
+     * WiFi
+     */
     wifi_manager::begin();
 
 
-    // ID único baseado no MAC do ESP32
+
+    /*
+     * Identificação do dispositivo
+     */
     deviceId =
         wifi_manager::getDeviceId();
 
@@ -84,16 +101,22 @@ void setup() {
     );
 
 
-    // MQTT
+
+    /*
+     * MQTT
+     */
     mqtt_client::begin(
         deviceId,
         onConfigReceived
     );
+
+
 }
 
 
 
-void loop() {
+void loop()
+{
 
     wifi_manager::poll();
 
@@ -105,9 +128,10 @@ void loop() {
 
 
     /*
-     * Leitura dos sensores
+     * Leitura periódica dos sensores
      */
-    if (now - lastSensorReadAt >= SENSOR_READ_INTERVAL_MS) {
+    if(now - lastSensorReadAt >= SENSOR_READ_INTERVAL_MS)
+    {
 
         lastSensorReadAt = now;
 
@@ -116,8 +140,9 @@ void loop() {
             sensors::read();
 
 
+
         Serial.printf(
-            "[main] leitura: umidade=%.1f%% temp=%.1fC timestamp=%lu\n",
+            "[main] leitura: umidade=%.1f%% temp=%.1fC ts=%lu\n",
             lastReading.humidity,
             lastReading.temperature,
             lastReading.timestamp
@@ -125,7 +150,9 @@ void loop() {
 
 
 
-        // Envia dados para Raspberry via MQTT
+        /*
+         * Publicação MQTT
+         */
         mqtt_client::publishSensorReading(
             lastReading
         );
@@ -133,7 +160,7 @@ void loop() {
 
 
         /*
-         * Controle local da bomba
+         * Controle local da irrigação
          */
         bool pumpChanged =
             pump_control::update(
@@ -142,8 +169,8 @@ void loop() {
             );
 
 
-        if (pumpChanged) {
-
+        if(pumpChanged)
+        {
             mqtt_client::publishPumpStatus(
                 pump_control::isActive()
             );
@@ -151,21 +178,31 @@ void loop() {
 
 
 
-        // LED indica atividade
+        /*
+         * LED de atividade
+         */
         digitalWrite(
             PIN_STATUS_LED,
             !digitalRead(PIN_STATUS_LED)
         );
+
     }
 
 
 
+
     /*
-     * Atualização do display OLED
+     * Atualização LCD 1602
      */
-    if (now - lastDisplayUpdateAt >= DISPLAY_UPDATE_INTERVAL_MS) {
+    if(now - lastDisplayUpdateAt >= DISPLAY_UPDATE_INTERVAL_MS)
+    {
 
         lastDisplayUpdateAt = now;
+
+
+        Serial.println(
+            "[main] atualizando display"
+        );
 
 
         display::update(
@@ -175,5 +212,7 @@ void loop() {
             pump_control::isActive(),
             mqtt_client::isConnected()
         );
+
     }
+
 }
