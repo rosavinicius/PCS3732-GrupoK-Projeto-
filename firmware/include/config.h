@@ -50,6 +50,7 @@
 #define MAX_PUMP_TIME  60000              // 60 segundos
 
 // Calibração do sensor de umidade capacitivo (ajustar após teste no solo seco/molhado)
+// Valor RAW alto = seco/ao ar, valor RAW baixo = molhado/na água
 #define SOIL_MOISTURE_RAW_DRY   4095
 #define SOIL_MOISTURE_RAW_WET   1000
 

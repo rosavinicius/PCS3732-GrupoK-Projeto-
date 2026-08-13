@@ -22,9 +22,12 @@ void begin() {
 
 static float readSoilMoisturePercent() {
     int raw = analogRead(PIN_SOIL_MOISTURE);
+    Serial.print("Soil RAW: ");
+    Serial.println(raw);
 
-    // sensor capacitivo: valor RAW alto = seco, valor RAW baixo = molhado
-    float pct = 100.0f *(SOIL_MOISTURE_RAW_DRY - raw) / (SOIL_MOISTURE_RAW_DRY - SOIL_MOISTURE_RAW_WET);
+    float rawDry = SOIL_MOISTURE_RAW_DRY;
+    float rawWet = SOIL_MOISTURE_RAW_WET;
+    float pct = 100.0f * (raw - rawDry) / (rawWet - rawDry);
     return constrain(pct, 0.0f, 100.0f);
 }
 

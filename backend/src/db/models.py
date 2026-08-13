@@ -1,3 +1,4 @@
+import uuid
 from enum import Enum
 
 from sqlalchemy import (
@@ -6,7 +7,6 @@ from sqlalchemy import (
     Enum as SqlEnum,
     Float,
     ForeignKey,
-    Integer,
     String,
     func,
 )
@@ -37,7 +37,12 @@ class DeviceStatus(str, Enum):
 class Device(Base):
     __tablename__ = "devices"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        String,
+        primary_key=True,
+        index=True,
+        default=lambda: str(uuid.uuid4()),
+    )
 
     mqtt_client_id = Column(String, unique=True, nullable=False)
     name = Column(String, nullable=False)
@@ -74,10 +79,15 @@ class Device(Base):
 class Plant(Base):
     __tablename__ = "plants"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        String,
+        primary_key=True,
+        index=True,
+        default=lambda: str(uuid.uuid4()),
+    )
 
     device_id = Column(
-        Integer,
+        String,
         ForeignKey("devices.id"),
         unique=True,
         nullable=False,
@@ -122,10 +132,15 @@ class Plant(Base):
 class SensorReading(Base):
     __tablename__ = "sensor_readings"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        String,
+        primary_key=True,
+        index=True,
+        default=lambda: str(uuid.uuid4()),
+    )
 
     plant_id = Column(
-        Integer,
+        String,
         ForeignKey("plants.id"),
         nullable=False,
     )
@@ -153,10 +168,15 @@ class SensorReading(Base):
 class IrrigationEvent(Base):
     __tablename__ = "irrigation_events"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        String,
+        primary_key=True,
+        index=True,
+        default=lambda: str(uuid.uuid4()),
+    )
 
     plant_id = Column(
-        Integer,
+        String,
         ForeignKey("plants.id"),
         nullable=False,
     )

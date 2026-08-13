@@ -57,7 +57,7 @@ def create_reading(
     response_model=List[schemas.SensorReadingResponse]
 )
 def get_history(
-    plant_id: int,
+    plant_id: str,
     limit: int = Query(
         default=500,
         le=5000
@@ -86,7 +86,7 @@ def get_history(
     response_model=schemas.SensorReadingResponse
 )
 def get_latest(
-    plant_id: int,
+    plant_id: str,
     db: Session = Depends(get_db)
 ):
 
@@ -116,7 +116,7 @@ def get_latest(
     response_model=List[schemas.SensorReadingResponse]
 )
 def get_history_range(
-    plant_id: int,
+    plant_id: str,
     start: datetime,
     end: datetime,
     db: Session = Depends(get_db)

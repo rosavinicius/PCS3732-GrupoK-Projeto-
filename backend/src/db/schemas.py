@@ -43,7 +43,7 @@ class DeviceUpdate(BaseModel):
 
 
 class DeviceResponse(DeviceBase):
-    id: int
+    id: str
     status: DeviceStatus
     last_seen: Optional[datetime]
     created_at: datetime
@@ -63,7 +63,7 @@ class PlantBase(BaseModel):
 
 
 class PlantCreate(PlantBase):
-    device_id: int
+    device_id: str
 
 
 class PlantUpdate(BaseModel):
@@ -74,8 +74,8 @@ class PlantUpdate(BaseModel):
 
 
 class PlantResponse(PlantBase):
-    id: int
-    device_id: int
+    id: str
+    device_id: str
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
@@ -86,14 +86,14 @@ class PlantResponse(PlantBase):
 # ============================================================
 
 class SensorReadingCreate(BaseModel):
-    plant_id: int
+    plant_id: str
     soil_moisture: float
     temperature: float
 
 
 class SensorReadingResponse(BaseModel):
-    id: int
-    plant_id: int
+    id: str
+    plant_id: str
     timestamp: datetime
     soil_moisture: float
     temperature: float
@@ -106,15 +106,15 @@ class SensorReadingResponse(BaseModel):
 # ============================================================
 
 class IrrigationEventCreate(BaseModel):
-    plant_id: int
+    plant_id: str
     duration_seconds: float
     water_amount_ml: Optional[float] = None
     trigger: IrrigationTrigger = IrrigationTrigger.AUTOMATIC
 
 
 class IrrigationEventResponse(BaseModel):
-    id: int
-    plant_id: int
+    id: str
+    plant_id: str
     start_time: datetime
     duration_seconds: float
     water_amount_ml: Optional[float]

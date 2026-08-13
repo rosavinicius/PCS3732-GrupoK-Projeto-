@@ -39,7 +39,7 @@ def create_irrigation_event(
 
 def get_irrigation(
     db: Session,
-    irrigation_id: int
+    irrigation_id: str
 ):
     """
     Busca uma irrigação pelo ID.
@@ -57,7 +57,7 @@ def get_irrigation(
 
 def get_plant_irrigations(
     db: Session,
-    plant_id: int,
+    plant_id: str,
     limit: int = 100
 ):
     """
@@ -81,7 +81,7 @@ def get_plant_irrigations(
 
 def get_last_irrigation(
     db: Session,
-    plant_id: int
+    plant_id: str
 ):
     """
     Retorna a última irrigação
@@ -107,7 +107,7 @@ def get_last_irrigation(
 
 def get_total_water_used(
     db: Session,
-    plant_id: int
+    plant_id: str
 ):
     """
     Retorna a quantidade total estimada
@@ -134,7 +134,7 @@ def get_total_water_used(
 
 def get_total_irrigation_time(
     db: Session,
-    plant_id: int
+    plant_id: str
 ):
     """
     Retorna o tempo total que a bomba
@@ -162,7 +162,7 @@ def get_total_irrigation_time(
 
 def delete_irrigation(
     db: Session,
-    irrigation_id: int
+    irrigation_id: str
 ):
     """
     Remove um evento de irrigação.

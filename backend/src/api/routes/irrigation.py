@@ -53,7 +53,7 @@ def create_irrigation(
     response_model=List[schemas.IrrigationEventResponse]
 )
 def get_irrigation_history(
-    plant_id: int,
+    plant_id: str,
     limit: int = 100,
     db: Session = Depends(get_db)
 ):
@@ -79,7 +79,7 @@ def get_irrigation_history(
     response_model=schemas.IrrigationEventResponse
 )
 def get_last_irrigation(
-    plant_id: int,
+    plant_id: str,
     db: Session = Depends(get_db)
 ):
     """
@@ -110,7 +110,7 @@ def get_last_irrigation(
     "/plants/{plant_id}/water"
 )
 def get_water_usage(
-    plant_id: int,
+    plant_id: str,
     db: Session = Depends(get_db)
 ):
     """
@@ -136,7 +136,7 @@ def get_water_usage(
     "/plants/{plant_id}/time"
 )
 def get_irrigation_time(
-    plant_id: int,
+    plant_id: str,
     db: Session = Depends(get_db)
 ):
     """
@@ -164,7 +164,7 @@ def get_irrigation_time(
     response_model=schemas.IrrigationEventResponse
 )
 def delete_irrigation(
-    irrigation_id: int,
+    irrigation_id: str,
     db: Session = Depends(get_db)
 ):
     """

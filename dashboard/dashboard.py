@@ -104,6 +104,8 @@ def set_threshold(plant_id, threshold):
 st.title("🌱 Dashboard - Irrigador Automático")
 
 # --- BARRA LATERAL ---
+selected_plant = None
+new_threshold = 40
 with st.sidebar:
     st.header("⚙️ Configurações")
     

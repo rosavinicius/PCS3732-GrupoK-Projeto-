@@ -36,7 +36,7 @@ def create_device(
 
 def get_device(
     db: Session,
-    device_id: int
+    device_id: str
 ):
     """
     Busca um ESP32 pelo ID.
@@ -94,7 +94,7 @@ def get_devices(
 
 def update_device(
     db: Session,
-    device_id: int,
+    device_id: str,
     device_update: schemas.DeviceUpdate
 ):
     """
@@ -169,7 +169,7 @@ def update_device_status(
 
 def delete_device(
     db: Session,
-    device_id: int
+    device_id: str
 ):
     """
     Remove um ESP32.

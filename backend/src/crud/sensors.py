@@ -41,7 +41,7 @@ def create_sensor_reading(
 
 def get_reading(
     db: Session,
-    reading_id: int
+    reading_id: str
 ):
     """
     Busca uma leitura específica.
@@ -59,7 +59,7 @@ def get_reading(
 
 def get_plant_history(
     db: Session,
-    plant_id: int,
+    plant_id: str,
     limit: int = 500
 ):
     """
@@ -84,7 +84,7 @@ def get_plant_history(
 
 def get_latest_reading(
     db: Session,
-    plant_id: int
+    plant_id: str
 ):
     """
     Retorna a última leitura recebida
@@ -106,7 +106,7 @@ def get_latest_reading(
 
 def get_history_between_dates(
     db: Session,
-    plant_id: int,
+    plant_id: str,
     start: datetime,
     end: datetime
 ):
@@ -135,7 +135,7 @@ def get_history_between_dates(
 
 def delete_reading(
     db: Session,
-    reading_id: int
+    reading_id: str
 ):
     """
     Remove uma leitura.

@@ -19,7 +19,7 @@ class ThresholdUpdate(BaseModel):
 
 # 2. Criamos a rota PATCH definitiva
 @router.patch("/{plant_id}/threshold")
-def update_plant_threshold(plant_id: int, threshold_data: ThresholdUpdate, db: Session = Depends(get_db)):
+def update_plant_threshold(plant_id: str, threshold_data: ThresholdUpdate, db: Session = Depends(get_db)):
     """
     Atualiza o limiar de umidade da planta no Banco de Dados 
     e envia a nova configuração para o respectivo ESP32 via MQTT.

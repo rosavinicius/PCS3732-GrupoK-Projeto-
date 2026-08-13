@@ -30,7 +30,7 @@ TOPIC_SUBSCRIBE_ALL = "devices/+/+"  # Captura sensors, status, pump e config
 # -------------------------------------------------------------------
 # PERSISTÊNCIA NO BANCO DE DADOS
 # -------------------------------------------------------------------
-def salvar_no_banco(planta_id: int, umidade: float, temperatura: float):
+def salvar_no_banco(planta_id: str, umidade: float, temperatura: float):
     """Cria a sessão do banco e grava a leitura enviada pelo ESP32."""
     db = SessionLocal()
     try:
@@ -79,21 +79,14 @@ def on_connect(client, userdata, flags, rc, properties=None):
 
 def on_message(client, userdata, msg):
     try:
-        # Ex: msg.topic = "devices/1/sensors"
+        # Ex: msg.topic = "devices/<device_id>/sensors"
         topic_parts = msg.topic.split('/')
         if len(topic_parts) != 3 or topic_parts[0] != "devices":
             return
 
-        device_id_str = topic_parts[1]
+        device_id = topic_parts[1]
         subtopic = topic_parts[2]
         payload_str = msg.payload.decode('utf-8')
-
-        # O schema exige plant_id como INT
-        try:
-            device_id = int(device_id_str)
-        except ValueError:
-            logging.warning(f"ID do dispositivo ({device_id_str}) precisa ser numérico.")
-            return
 
         # ---------------------------------------------------------------
         # 1. PROCESSA SENSORES (/sensors)

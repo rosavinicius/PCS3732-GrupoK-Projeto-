@@ -37,7 +37,7 @@ def create_plant(
 
 def get_plant(
     db: Session,
-    plant_id: int
+    plant_id: str
 ):
     """
     Retorna uma planta pelo ID.
@@ -75,7 +75,7 @@ def get_plants(
 
 def update_plant(
     db: Session,
-    plant_id: int,
+    plant_id: str,
     plant_update: schemas.PlantUpdate
 ):
     """
@@ -115,7 +115,7 @@ def update_plant(
 
 def delete_plant(
     db: Session,
-    plant_id: int
+    plant_id: str
 ):
     """
     Remove uma planta.

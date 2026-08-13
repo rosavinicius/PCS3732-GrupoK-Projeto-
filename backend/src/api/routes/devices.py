@@ -75,7 +75,7 @@ def read_devices(
     response_model=schemas.DeviceResponse
 )
 def read_device(
-    device_id: int,
+    device_id: str,
     db: Session = Depends(get_db)
 ):
 
@@ -104,7 +104,7 @@ def read_device(
     response_model=schemas.DeviceResponse
 )
 def update_device(
-    device_id: int,
+    device_id: str,
     device_update: schemas.DeviceUpdate,
     db: Session = Depends(get_db)
 ):
@@ -135,7 +135,7 @@ def update_device(
     response_model=schemas.DeviceResponse
 )
 def delete_device(
-    device_id: int,
+    device_id: str,
     db: Session = Depends(get_db)
 ):
 
