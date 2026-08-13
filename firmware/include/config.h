@@ -43,7 +43,7 @@
 // ---------------------------------------------------------------------------
 // Comportamento
 // ---------------------------------------------------------------------------
-#define SENSOR_READ_INTERVAL_MS   30000   // lê e publica sensores a cada 30s
+#define SENSOR_READ_INTERVAL_MS   10000   // lê e publica sensores a cada 10s
 #define DISPLAY_UPDATE_INTERVAL_MS 1000
 #define DEFAULT_HUMIDITY_THRESHOLD 30.0f  // usado só se nada estiver salvo na flash
 #define PUMP_HYSTERESIS_PERCENT    3.0f   // evita a bomba ligar/desligar em flapping
