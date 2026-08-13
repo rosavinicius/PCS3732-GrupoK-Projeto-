@@ -2,12 +2,13 @@ import streamlit as st
 import pandas as pd
 import requests
 import random
+
 from datetime import datetime, timedelta
 
 
-# ==========================================
-# Configurações
-# ==========================================
+# ============================================================
+# CONFIGURAÇÃO DA PÁGINA
+# ============================================================
 
 st.set_page_config(
     page_title="Irrigador Automático",
@@ -15,21 +16,102 @@ st.set_page_config(
     layout="wide"
 )
 
+
+# ============================================================
+# CONFIGURAÇÕES GERAIS
+# ============================================================
+
 API_URL = "http://localhost:8000"
 
 # False = usa API real
 # True = usa dados simulados
 USE_MOCK_DATA = False
 
+REQUEST_TIMEOUT = 5
 
-# ==========================================
-# Funções de Comunicação com a API
-# ==========================================
+
+# ============================================================
+# FUNÇÕES AUXILIARES DE VALIDAÇÃO
+# ============================================================
+
+def is_valid_dict(value):
+    """
+    Verifica se o valor é um dicionário válido.
+    """
+
+    return isinstance(value, dict)
+
+
+def safe_float(value, default=None):
+    """
+    Converte um valor para float com segurança.
+    """
+
+    if value is None:
+        return default
+
+    try:
+        return float(value)
+
+    except (TypeError, ValueError):
+        return default
+
+
+def safe_int(value, default=None):
+    """
+    Converte um valor para int com segurança.
+    """
+
+    if value is None:
+        return default
+
+    try:
+        return int(float(value))
+
+    except (TypeError, ValueError):
+        return default
+
+
+def normalize_list(data):
+    """
+    Garante que o retorno da API seja uma lista de dicionários.
+
+    Exemplos:
+
+    None
+        -> []
+
+    {}
+        -> []
+
+    [{"id": 1}, None]
+        -> [{"id": 1}]
+
+    [{"id": 1}]
+        -> [{"id": 1}]
+    """
+
+    if data is None:
+        return []
+
+    if not isinstance(data, list):
+        return []
+
+    return [
+        item
+        for item in data
+        if isinstance(item, dict)
+    ]
+
+
+# ============================================================
+# API - DEVICES
+# ============================================================
 
 def get_devices():
-    """Busca os dispositivos ESP32 cadastrados."""
 
     if USE_MOCK_DATA:
+
         return [
             {
                 "id": 1,
@@ -44,37 +126,58 @@ def get_devices():
         ]
 
     try:
-        req = requests.get(
+
+        response = requests.get(
             f"{API_URL}/devices/",
-            timeout=5
+            timeout=REQUEST_TIMEOUT
         )
 
-        if req.status_code == 200:
-            data = req.json()
-
-            if isinstance(data, list):
-                return [
-                    device
-                    for device in data
-                    if isinstance(device, dict)
-                ]
+        if response.status_code != 200:
 
             st.sidebar.error(
-                "A API retornou um formato inválido para devices."
+                f"Erro ao buscar dispositivos. "
+                f"HTTP {response.status_code}"
             )
 
+            return []
+
+        data = response.json()
+
+        return normalize_list(data)
+
     except requests.exceptions.RequestException as e:
+
         st.sidebar.error(
-            f"Erro ao conectar com API de Devices: {e}"
+            f"Erro de conexão com a API de Devices: {e}"
         )
 
-    return []
+        return []
 
+    except ValueError:
+
+        st.sidebar.error(
+            "A API de Devices retornou um JSON inválido."
+        )
+
+        return []
+
+    except Exception as e:
+
+        st.sidebar.error(
+            f"Erro inesperado ao buscar Devices: {e}"
+        )
+
+        return []
+
+
+# ============================================================
+# API - PLANTS
+# ============================================================
 
 def get_plants():
-    """Busca as plantas cadastradas."""
 
     if USE_MOCK_DATA:
+
         return [
             {
                 "id": 10,
@@ -93,295 +196,520 @@ def get_plants():
         ]
 
     try:
-        req = requests.get(
+
+        response = requests.get(
             f"{API_URL}/plants/",
-            timeout=5
+            timeout=REQUEST_TIMEOUT
         )
 
-        if req.status_code == 200:
-            data = req.json()
-
-            if isinstance(data, list):
-                return [
-                    plant
-                    for plant in data
-                    if isinstance(plant, dict)
-                ]
+        if response.status_code != 200:
 
             st.sidebar.error(
-                "A API retornou um formato inválido para plants."
+                f"Erro ao buscar plantas. "
+                f"HTTP {response.status_code}"
             )
 
+            return []
+
+        data = response.json()
+
+        return normalize_list(data)
+
     except requests.exceptions.RequestException as e:
+
         st.sidebar.error(
-            f"Erro ao conectar com API de Plants: {e}"
+            f"Erro de conexão com a API de Plants: {e}"
         )
 
-    return []
+        return []
 
+    except ValueError:
+
+        st.sidebar.error(
+            "A API de Plants retornou um JSON inválido."
+        )
+
+        return []
+
+    except Exception as e:
+
+        st.sidebar.error(
+            f"Erro inesperado ao buscar Plants: {e}"
+        )
+
+        return []
+
+
+# ============================================================
+# API - HISTÓRICO
+# ============================================================
 
 def get_history(plant_id, limit=60):
-    """Busca o histórico de sensores de uma planta."""
+
+    # --------------------------------------------------------
+    # Proteção contra ID inválido
+    # --------------------------------------------------------
+
+    if plant_id is None:
+
+        return pd.DataFrame()
 
     if USE_MOCK_DATA:
+
         now = datetime.now()
 
         data = []
 
         for i in range(limit):
-            time_point = now - timedelta(
-                minutes=limit - i
+
+            time_point = (
+                now
+                - timedelta(minutes=limit - i)
             )
 
-            data.append({
-                "timestamp": time_point,
-                "soil_moisture": random.uniform(30.0, 60.0),
-                "temperature": random.uniform(22.0, 28.0)
-            })
+            data.append(
+                {
+                    "timestamp": time_point,
+                    "soil_moisture": random.uniform(
+                        30.0,
+                        60.0
+                    ),
+                    "temperature": random.uniform(
+                        22.0,
+                        28.0
+                    )
+                }
+            )
 
         return pd.DataFrame(data)
 
     try:
-        req = requests.get(
+
+        response = requests.get(
             f"{API_URL}/sensors/plants/{plant_id}/history",
             params={"limit": limit},
-            timeout=5
+            timeout=REQUEST_TIMEOUT
         )
 
-        if req.status_code == 200:
-            data = req.json()
+        if response.status_code != 200:
 
-            if not data:
-                return pd.DataFrame()
+            st.error(
+                f"Erro ao buscar histórico da planta "
+                f"{plant_id}. "
+                f"HTTP {response.status_code}"
+            )
 
-            if not isinstance(data, list):
-                st.error(
-                    "A API retornou um formato inválido para o histórico."
-                )
-                return pd.DataFrame()
+            return pd.DataFrame()
 
-            df = pd.DataFrame(data)
+        data = response.json()
 
-            # Verifica se as colunas necessárias existem
-            required_columns = [
+        # ----------------------------------------------------
+        # API retornou None
+        # ----------------------------------------------------
+
+        if data is None:
+
+            return pd.DataFrame()
+
+        # ----------------------------------------------------
+        # API não retornou uma lista
+        # ----------------------------------------------------
+
+        if not isinstance(data, list):
+
+            st.error(
+                "A API de histórico retornou um formato inválido."
+            )
+
+            return pd.DataFrame()
+
+        # ----------------------------------------------------
+        # Remove registros None
+        # ----------------------------------------------------
+
+        data = [
+            item
+            for item in data
+            if isinstance(item, dict)
+        ]
+
+        if not data:
+
+            return pd.DataFrame()
+
+        df = pd.DataFrame(data)
+
+        # ----------------------------------------------------
+        # Verificar colunas
+        # ----------------------------------------------------
+
+        required_columns = [
+            "timestamp",
+            "soil_moisture",
+            "temperature"
+        ]
+
+        missing_columns = [
+            column
+            for column in required_columns
+            if column not in df.columns
+        ]
+
+        if missing_columns:
+
+            st.error(
+                "Os dados de histórico estão incompletos. "
+                f"Colunas ausentes: {missing_columns}"
+            )
+
+            return pd.DataFrame()
+
+        # ----------------------------------------------------
+        # Converter timestamp
+        # ----------------------------------------------------
+
+        df["timestamp"] = pd.to_datetime(
+            df["timestamp"],
+            errors="coerce"
+        )
+
+        # ----------------------------------------------------
+        # Converter sensores
+        # ----------------------------------------------------
+
+        df["soil_moisture"] = pd.to_numeric(
+            df["soil_moisture"],
+            errors="coerce"
+        )
+
+        df["temperature"] = pd.to_numeric(
+            df["temperature"],
+            errors="coerce"
+        )
+
+        # ----------------------------------------------------
+        # Remover linhas inválidas
+        # ----------------------------------------------------
+
+        df = df.dropna(
+            subset=[
                 "timestamp",
                 "soil_moisture",
                 "temperature"
             ]
+        )
 
-            missing_columns = [
-                column
-                for column in required_columns
-                if column not in df.columns
-            ]
+        if df.empty:
 
-            if missing_columns:
-                st.error(
-                    "Dados do histórico incompletos. "
-                    f"Colunas ausentes: {missing_columns}"
-                )
-                return pd.DataFrame()
+            return pd.DataFrame()
 
-            df["timestamp"] = pd.to_datetime(
-                df["timestamp"],
-                errors="coerce"
-            )
+        # ----------------------------------------------------
+        # Ordenar
+        # ----------------------------------------------------
 
-            df["soil_moisture"] = pd.to_numeric(
-                df["soil_moisture"],
-                errors="coerce"
-            )
+        df = df.sort_values(
+            by="timestamp"
+        )
 
-            df["temperature"] = pd.to_numeric(
-                df["temperature"],
-                errors="coerce"
-            )
-
-            df = df.dropna(
-                subset=[
-                    "timestamp",
-                    "soil_moisture",
-                    "temperature"
-                ]
-            )
-
-            df = df.sort_values(
-                by="timestamp"
-            )
-
-            return df
-
-        else:
-            st.error(
-                f"Erro ao buscar histórico. "
-                f"HTTP {req.status_code}: {req.text}"
-            )
+        return df
 
     except requests.exceptions.RequestException as e:
+
         st.error(
-            f"Erro ao buscar histórico: {e}"
+            f"Erro de conexão ao buscar histórico: {e}"
         )
 
-    return pd.DataFrame()
+        return pd.DataFrame()
 
+    except ValueError:
+
+        st.error(
+            "A API de histórico retornou JSON inválido."
+        )
+
+        return pd.DataFrame()
+
+    except Exception as e:
+
+        st.error(
+            f"Erro inesperado ao buscar histórico: {e}"
+        )
+
+        return pd.DataFrame()
+
+
+# ============================================================
+# API - ALTERAR THRESHOLD
+# ============================================================
 
 def set_threshold(plant_id, threshold):
-    """Altera o limiar mínimo de umidade da planta."""
+
+    # --------------------------------------------------------
+    # Validação
+    # --------------------------------------------------------
+
+    if plant_id is None:
+
+        st.error(
+            "Não é possível alterar o limiar: "
+            "a planta não possui ID."
+        )
+
+        return False
+
+    threshold = safe_float(
+        threshold,
+        None
+    )
+
+    if threshold is None:
+
+        st.error(
+            "Valor de limiar inválido."
+        )
+
+        return False
+
+    threshold = max(
+        0.0,
+        min(100.0, threshold)
+    )
+
+    # --------------------------------------------------------
+    # Mock
+    # --------------------------------------------------------
 
     if USE_MOCK_DATA:
+
         st.toast(
             f"✅ Limiar da planta {plant_id} "
-            f"alterado para {threshold}% (Mock)"
+            f"alterado para {threshold:.0f}% (Mock)"
         )
+
         return True
 
+    # --------------------------------------------------------
+    # API
+    # --------------------------------------------------------
+
     try:
-        req = requests.patch(
+
+        response = requests.patch(
             f"{API_URL}/plants/{plant_id}/threshold",
             json={
-                "min_moisture": float(threshold)
+                "min_moisture": threshold
             },
-            timeout=5
+            timeout=REQUEST_TIMEOUT
         )
 
-        if req.status_code == 200:
+        if response.status_code == 200:
+
             st.toast(
                 "✅ Limiar alterado com sucesso!"
             )
+
             return True
 
-        else:
-            st.error(
-                f"Erro na API: HTTP {req.status_code}\n\n"
-                f"{req.text}"
-            )
-            return False
+        st.error(
+            f"Erro ao alterar limiar. "
+            f"HTTP {response.status_code}: "
+            f"{response.text}"
+        )
+
+        return False
 
     except requests.exceptions.RequestException as e:
+
         st.error(
-            f"Erro de conexão ao salvar: {e}"
+            f"Erro de conexão ao salvar limiar: {e}"
         )
+
+        return False
+
+    except Exception as e:
+
+        st.error(
+            f"Erro inesperado ao salvar limiar: {e}"
+        )
+
         return False
 
 
-# ==========================================
-# Interface
-# ==========================================
+# ============================================================
+# INÍCIO DA INTERFACE
+# ============================================================
 
-st.title("🌱 Dashboard - Irrigador Automático")
+st.title(
+    "🌱 Dashboard - Irrigador Automático"
+)
 
 
-# ==========================================
-# Barra Lateral
-# ==========================================
+# ============================================================
+# VARIÁVEIS PADRÃO
+# ============================================================
 
 selected_plant = None
+selected_device_id = None
 new_threshold = 40
+
+
+# ============================================================
+# SIDEBAR
+# ============================================================
 
 with st.sidebar:
 
-    st.header("⚙️ Configurações")
+    st.header(
+        "⚙️ Configurações"
+    )
+
+    # --------------------------------------------------------
+    # Status da API
+    # --------------------------------------------------------
 
     if USE_MOCK_DATA:
+
         st.info(
             "⚠️ Rodando com Dados Simulados (Mock)"
         )
+
     else:
+
         st.success(
-            "🔌 Conectado à API Real"
+            "🔌 Usando API Real"
         )
 
-    # --------------------------------------
+    # --------------------------------------------------------
     # Buscar dispositivos
-    # --------------------------------------
+    # --------------------------------------------------------
 
     devices = get_devices()
 
     if not devices:
+
         st.warning(
-            "Nenhum dispositivo encontrado."
+            "Nenhum dispositivo encontrado no banco de dados."
         )
+
+        st.info(
+            "Verifique se existem dispositivos cadastrados "
+            "na tabela de devices."
+        )
+
         st.stop()
 
-    # Remove dispositivos inválidos
-    valid_devices = [
-        device
-        for device in devices
-        if isinstance(device, dict)
-        and device.get("id") is not None
-    ]
+    # --------------------------------------------------------
+    # Filtrar dispositivos válidos
+    # --------------------------------------------------------
+
+    valid_devices = []
+
+    for device in devices:
+
+        if not isinstance(device, dict):
+            continue
+
+        device_id = device.get("id")
+
+        if device_id is None:
+            continue
+
+        valid_devices.append(device)
 
     if not valid_devices:
+
         st.error(
-            "A API não retornou dispositivos válidos."
+            "Existem dispositivos no banco, "
+            "mas nenhum possui um ID válido."
         )
+
         st.stop()
 
-    # --------------------------------------
-    # Buscar plantas
-    # --------------------------------------
-
-    plants = get_plants()
-
-    # --------------------------------------
-    # Montar opções de dispositivos
-    # --------------------------------------
+    # --------------------------------------------------------
+    # Montar opções
+    # --------------------------------------------------------
 
     device_options = {}
 
     for device in valid_devices:
 
-        device_id = device["id"]
+        device_id = device.get("id")
 
-        device_name = device.get(
+        name = device.get(
             "name",
             "Dispositivo"
         )
 
         mqtt_client_id = device.get(
             "mqtt_client_id",
-            "sem MQTT ID"
+            "MQTT não configurado"
         )
+
+        if name is None:
+            name = "Dispositivo"
+
+        if mqtt_client_id is None:
+            mqtt_client_id = "MQTT não configurado"
 
         device_options[device_id] = (
-            f"{device_name} ({mqtt_client_id})"
+            f"{name} ({mqtt_client_id})"
         )
 
-    # --------------------------------------
-    # Seleção do ESP32
-    # --------------------------------------
+    # --------------------------------------------------------
+    # Seleção do dispositivo
+    # --------------------------------------------------------
 
     selected_device_id = st.selectbox(
         "Selecione o Módulo (ESP32)",
         options=list(device_options.keys()),
-        format_func=lambda x: device_options[x]
+        format_func=lambda device_id: device_options.get(
+            device_id,
+            f"Dispositivo {device_id}"
+        )
     )
 
-    # --------------------------------------
+    # --------------------------------------------------------
+    # Buscar plantas
+    # --------------------------------------------------------
+
+    plants = get_plants()
+
+    # --------------------------------------------------------
     # Encontrar planta associada
-    # --------------------------------------
+    # --------------------------------------------------------
 
-    selected_plant = next(
-        (
-            plant
-            for plant in plants
-            if isinstance(plant, dict)
-            and plant.get("device_id") == selected_device_id
-        ),
-        None
-    )
+    selected_plant = None
 
-    # --------------------------------------
-    # Debug opcional
-    # --------------------------------------
+    if plants:
 
-    # Se quiser investigar o retorno da API,
-    # descomente as linhas abaixo.
+        for plant in plants:
 
-    # st.write("Devices:", devices)
-    # st.write("Plants:", plants)
-    # st.write("Selected device:", selected_device_id)
-    # st.write("Selected plant:", selected_plant)
+            # Proteção contra None
+            if not isinstance(plant, dict):
+                continue
+
+            plant_device_id = plant.get(
+                "device_id"
+            )
+
+            # Se não possui device_id,
+            # não conseguimos associá-la ao ESP32
+            if plant_device_id is None:
+                continue
+
+            # Comparação
+            if plant_device_id == selected_device_id:
+
+                # Verifica se a planta possui ID
+                if plant.get("id") is not None:
+
+                    selected_plant = plant
+
+                break
+
+    # --------------------------------------------------------
+    # Controle da planta
+    # --------------------------------------------------------
 
     st.divider()
 
@@ -389,140 +717,188 @@ with st.sidebar:
         "💧 Controle de Irrigação"
     )
 
-    # ======================================
-    # Planta encontrada
-    # ======================================
+    if isinstance(selected_plant, dict):
 
-    if selected_plant is not None:
+        # ------------------------------------
+        # ID
+        # ------------------------------------
 
-        plant_id = selected_plant.get("id")
-
-        plant_name = selected_plant.get(
-            "name",
-            "Desconhecida"
+        plant_id = selected_plant.get(
+            "id"
         )
-
-        min_moisture = selected_plant.get(
-            "min_moisture",
-            40
-        )
-
-        # ----------------------------------
-        # Validação do ID
-        # ----------------------------------
 
         if plant_id is None:
 
             st.error(
-                "⚠️ A planta associada não possui ID."
+                "A planta encontrada não possui ID."
             )
 
-            st.stop()
+            selected_plant = None
 
-        # ----------------------------------
-        # Validação do threshold
-        # ----------------------------------
+        else:
 
-        try:
+            # --------------------------------
+            # Nome
+            # --------------------------------
+
+            plant_name = selected_plant.get(
+                "name"
+            )
+
+            if plant_name is None:
+                plant_name = "Planta desconhecida"
+
+            # --------------------------------
+            # Threshold
+            # --------------------------------
+
+            min_moisture = selected_plant.get(
+                "min_moisture"
+            )
+
+            min_moisture = safe_float(
+                min_moisture,
+                40.0
+            )
+
+            # Garantir intervalo
+            min_moisture = max(
+                0.0,
+                min(100.0, min_moisture)
+            )
+
             default_threshold = int(
-                float(min_moisture)
-            )
-        except (TypeError, ValueError):
-            default_threshold = 40
-
-        # Garante que está entre 0 e 100
-        default_threshold = max(
-            0,
-            min(100, default_threshold)
-        )
-
-        # ----------------------------------
-        # Slider
-        # ----------------------------------
-
-        new_threshold = st.slider(
-            "Limiar de Umidade (%)",
-            min_value=0,
-            max_value=100,
-            value=default_threshold
-        )
-
-        # ----------------------------------
-        # Salvar threshold
-        # ----------------------------------
-
-        if st.button(
-            "Salvar Limiar",
-            use_container_width=True
-        ):
-
-            set_threshold(
-                plant_id,
-                new_threshold
+                min_moisture
             )
 
-    # ======================================
-    # Nenhuma planta encontrada
-    # ======================================
+            # --------------------------------
+            # Slider
+            # --------------------------------
 
-    else:
+            new_threshold = st.slider(
+                "Limiar de Umidade (%)",
+                min_value=0,
+                max_value=100,
+                value=default_threshold
+            )
+
+            # --------------------------------
+            # Salvar
+            # --------------------------------
+
+            if st.button(
+                "Salvar Limiar",
+                use_container_width=True
+            ):
+
+                success = set_threshold(
+                    plant_id,
+                    new_threshold
+                )
+
+                if success:
+
+                    st.rerun()
+
+    # --------------------------------------------------------
+    # Sem planta
+    # --------------------------------------------------------
+
+    if selected_plant is None:
 
         st.warning(
             "Este dispositivo não possui "
-            "uma Planta associada no Banco de Dados."
+            "uma Planta associada."
+        )
+
+        st.caption(
+            "A planta precisa possuir um "
+            "`device_id` correspondente ao ID "
+            "do ESP32."
         )
 
         new_threshold = 40
 
 
-# ==========================================
-# Área Principal
-# ==========================================
+# ============================================================
+# ÁREA PRINCIPAL
+# ============================================================
 
-# IMPORTANTE:
-# Aqui fazemos a verificação ANTES de qualquer
-# selected_plant.get(...)
+# ============================================================
+# PROTEÇÃO ABSOLUTA CONTRA selected_plant = None
+# ============================================================
 
-if selected_plant is None:
+if not isinstance(
+    selected_plant,
+    dict
+):
 
     st.error(
-        "⚠️ Este dispositivo não possui "
-        "uma Planta associada no Banco de Dados."
+        "⚠️ Nenhuma planta válida está associada "
+        "ao dispositivo selecionado."
     )
 
     st.info(
-        "Verifique se o campo 'device_id' da planta "
-        "corresponde ao 'id' do ESP32 selecionado."
+        "Verifique no banco de dados se existe uma planta "
+        "com `device_id` igual ao `id` do dispositivo."
     )
+
+    # Mostrar informações úteis para diagnóstico
+    with st.expander(
+        "🔎 Diagnóstico"
+    ):
+
+        st.write(
+            "ID do dispositivo selecionado:",
+            selected_device_id
+        )
+
+        st.write(
+            "Quantidade de dispositivos:",
+            len(devices)
+            if isinstance(devices, list)
+            else 0
+        )
+
+        st.write(
+            "Quantidade de plantas:",
+            len(plants)
+            if isinstance(plants, list)
+            else 0
+        )
 
     st.stop()
 
 
-# ==========================================
-# Dados seguros da planta
-# ==========================================
+# ============================================================
+# AGORA selected_plant É GARANTIDAMENTE UM DICT
+# ============================================================
 
-plant_id = selected_plant.get("id")
-
-plant_name = selected_plant.get(
-    "name",
-    "Desconhecida"
+plant_id = selected_plant.get(
+    "id"
 )
 
-
-# Validação final
 if plant_id is None:
 
     st.error(
-        "⚠️ A planta selecionada não possui um ID válido."
+        "⚠️ A planta selecionada não possui ID."
     )
 
     st.stop()
 
 
-# ==========================================
-# Título da planta
-# ==========================================
+plant_name = selected_plant.get(
+    "name"
+)
+
+if plant_name is None:
+
+    plant_name = "Planta desconhecida"
+
+
+# ============================================================
+# CABEÇALHO DA PLANTA
+# ============================================================
 
 st.markdown(
     f"**Visualizando dados da planta:** "
@@ -531,9 +907,9 @@ st.markdown(
 )
 
 
-# ==========================================
-# Histórico
-# ==========================================
+# ============================================================
+# HISTÓRICO
+# ============================================================
 
 df_history = get_history(
     plant_id,
@@ -541,43 +917,156 @@ df_history = get_history(
 )
 
 
-# ==========================================
-# Sem dados
-# ==========================================
+# ============================================================
+# SEM DADOS DE SENSOR
+# ============================================================
+
+if not isinstance(
+    df_history,
+    pd.DataFrame
+):
+
+    st.error(
+        "O histórico retornado pela API "
+        "não é um DataFrame válido."
+    )
+
+    st.stop()
+
 
 if df_history.empty:
 
     st.info(
-        "Aguardando leituras do banco de dados "
-        "para esta planta..."
+        "Aguardando leituras dos sensores "
+        "para esta planta."
     )
 
-
-# ==========================================
-# Com dados
-# ==========================================
+    st.caption(
+        "Isso pode acontecer quando a planta ainda "
+        "não possui leituras registradas no banco."
+    )
 
 else:
 
+    # ========================================================
+    # VALIDAR DADOS DA ÚLTIMA LEITURA
+    # ========================================================
+
+    required_columns = [
+        "timestamp",
+        "soil_moisture",
+        "temperature"
+    ]
+
+    missing_columns = [
+        column
+        for column in required_columns
+        if column not in df_history.columns
+    ]
+
+    if missing_columns:
+
+        st.error(
+            "O histórico não possui todas as colunas "
+            f"necessárias: {missing_columns}"
+        )
+
+        st.stop()
+
+    # ========================================================
+    # ÚLTIMA LEITURA
+    # ========================================================
+
     current_data = df_history.iloc[-1]
 
-    # --------------------------------------
-    # Dados atuais
-    # --------------------------------------
+    # --------------------------------------------------------
+    # Umidade
+    # --------------------------------------------------------
 
-    current_moisture = float(
-        current_data["soil_moisture"]
+    current_moisture = safe_float(
+        current_data.get(
+            "soil_moisture"
+        )
     )
 
-    current_temperature = float(
-        current_data["temperature"]
+    # --------------------------------------------------------
+    # Temperatura
+    # --------------------------------------------------------
+
+    current_temperature = safe_float(
+        current_data.get(
+            "temperature"
+        )
     )
 
-    # --------------------------------------
+    # --------------------------------------------------------
+    # Threshold atual
+    # --------------------------------------------------------
+
+    threshold = safe_float(
+        new_threshold,
+        40.0
+    )
+
+    threshold = max(
+        0.0,
+        min(100.0, threshold)
+    )
+
+    # ========================================================
+    # CARDS
+    # ========================================================
+
+    col1, col2, col3 = st.columns(3)
+
+    # --------------------------------------------------------
+    # Umidade
+    # --------------------------------------------------------
+
+    if current_moisture is None:
+
+        col1.metric(
+            "Umidade do Solo",
+            "Sem dados"
+        )
+
+    else:
+
+        col1.metric(
+            "Umidade do Solo",
+            f"{current_moisture:.1f}%",
+            delta=f"Limiar: {threshold:.0f}%",
+            delta_color="off"
+        )
+
+    # --------------------------------------------------------
+    # Temperatura
+    # --------------------------------------------------------
+
+    if current_temperature is None:
+
+        col2.metric(
+            "Temperatura",
+            "Sem dados"
+        )
+
+    else:
+
+        col2.metric(
+            "Temperatura",
+            f"{current_temperature:.1f} °C"
+        )
+
+    # --------------------------------------------------------
     # Status da bomba
-    # --------------------------------------
+    # --------------------------------------------------------
 
-    if current_moisture < new_threshold:
+    if current_moisture is None:
+
+        pump_status = "Indisponível ⚠️"
+        pump_color = "off"
+
+    elif current_moisture < threshold:
 
         pump_status = "Ligada 💦"
         pump_color = "inverse"
@@ -587,34 +1076,15 @@ else:
         pump_status = "Desligada ⏸️"
         pump_color = "normal"
 
-    # --------------------------------------
-    # Cards
-    # --------------------------------------
-
-    col1, col2, col3 = st.columns(3)
-
-    col1.metric(
-        "Umidade do Solo",
-        f"{current_moisture:.1f}%",
-        delta=f"Limiar: {new_threshold}%",
-        delta_color="off"
-    )
-
-    col2.metric(
-        "Temperatura",
-        f"{current_temperature:.1f} °C"
-    )
-
     col3.metric(
         "Status da Bomba",
         pump_status,
-        delta="Automático",
-        delta_color=pump_color
+        delta="Automático"
     )
 
-    # --------------------------------------
-    # Histórico
-    # --------------------------------------
+    # ========================================================
+    # HISTÓRICO
+    # ========================================================
 
     st.divider()
 
@@ -629,9 +1099,9 @@ else:
         ]
     )
 
-    # ======================================
-    # Gráfico de Umidade
-    # ======================================
+    # ========================================================
+    # GRÁFICO DE UMIDADE
+    # ========================================================
 
     with tab1:
 
@@ -642,24 +1112,40 @@ else:
             ]
         ].copy()
 
-        df_chart_hum = (
-            df_chart_hum
-            .set_index("timestamp")
-        )
-
-        df_chart_hum["Limiar"] = new_threshold
-
-        st.line_chart(
-            df_chart_hum,
-            color=[
-                "#2f9e5b",
-                "#cc4b37"
+        df_chart_hum = df_chart_hum.dropna(
+            subset=[
+                "timestamp",
+                "soil_moisture"
             ]
         )
 
-    # ======================================
-    # Gráfico de Temperatura
-    # ======================================
+        if df_chart_hum.empty:
+
+            st.info(
+                "Não existem dados válidos "
+                "de umidade para exibir."
+            )
+
+        else:
+
+            df_chart_hum = (
+                df_chart_hum
+                .set_index("timestamp")
+            )
+
+            df_chart_hum["Limiar"] = threshold
+
+            st.line_chart(
+                df_chart_hum,
+                color=[
+                    "#2f9e5b",
+                    "#cc4b37"
+                ]
+            )
+
+    # ========================================================
+    # GRÁFICO DE TEMPERATURA
+    # ========================================================
 
     with tab2:
 
@@ -670,24 +1156,42 @@ else:
             ]
         ].copy()
 
-        df_chart_temp = (
-            df_chart_temp
-            .set_index("timestamp")
+        df_chart_temp = df_chart_temp.dropna(
+            subset=[
+                "timestamp",
+                "temperature"
+            ]
         )
 
-        st.line_chart(
-            df_chart_temp,
-            color=["#d9971f"]
-        )
+        if df_chart_temp.empty:
+
+            st.info(
+                "Não existem dados válidos "
+                "de temperatura para exibir."
+            )
+
+        else:
+
+            df_chart_temp = (
+                df_chart_temp
+                .set_index("timestamp")
+            )
+
+            st.line_chart(
+                df_chart_temp,
+                color=["#d9971f"]
+            )
 
 
-# ==========================================
-# Atualizar dados
-# ==========================================
+# ============================================================
+# BOTÃO DE ATUALIZAÇÃO
+# ============================================================
+
+st.divider()
 
 if st.button(
-    "Atualizar Dados Agora 🔄"
+    "Atualizar Dados Agora 🔄",
+    use_container_width=True
 ):
 
     st.rerun()
-    
