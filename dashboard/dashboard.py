@@ -11,8 +11,8 @@ st.set_page_config(page_title="Irrigador Automático", page_icon="🌱", layout=
 
 API_URL = "http://localhost:8000"
 
-# ALTERNE AQUI: True para dados falsos, False para consumir da API real
-USE_MOCK_DATA = True 
+# Use False para consumir da API real em vez de dados mockados
+USE_MOCK_DATA = False
 
 # ==========================================
 # Funções de Comunicação com a API / Mocks
@@ -130,7 +130,7 @@ with st.sidebar:
     new_threshold = st.slider("Limiar de Umidade (%)", min_value=0, max_value=100, value=int(default_threshold))
     
     if st.button("Salvar Limiar", use_container_width=True):
-        set_threshold(selected_device_id, new_threshold)
+        set_threshold(selected_plant["id"], new_threshold)
 
 # --- ÁREA PRINCIPAL ---
 if not selected_plant:
