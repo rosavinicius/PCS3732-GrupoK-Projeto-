@@ -32,21 +32,13 @@ void begin() {
 
     Serial.println("[display] iniciando LCD 1602...");
 
-
-    Wire.begin(
-        LCD_SDA,
-        LCD_SCL
-    );
-
+    Wire.setPins(LCD_SDA, LCD_SCL);
+    Wire.begin();
     delay(1000); // aguarda o barramento estabilizar
 
     lcd.init();
-
     lcd.backlight();
-
-
     available = true;
-
 
     lcd.clear();
 
@@ -55,7 +47,6 @@ void begin() {
 
     lcd.setCursor(0,1);
     lcd.print("Inicializando");
-
 
     Serial.println("[display] LCD conectado!");
 }
