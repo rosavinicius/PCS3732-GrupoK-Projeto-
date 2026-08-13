@@ -8,6 +8,10 @@ from backend.src.crud.sensors import create_sensor_reading
 from backend.src.db.database import SessionLocal
 from backend.src.db.schemas import DeviceStatus, SensorReadingCreate
 
+# Para rodar localmente, instale as dependências e execute:
+# pip install paho-mqtt
+# python backend/src/mqtt/receiver.py
+
 # -------------------------------------------------------------------
 # CONFIGURAÇÕES MQTT
 # -------------------------------------------------------------------

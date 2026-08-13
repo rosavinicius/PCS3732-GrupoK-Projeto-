@@ -10,7 +10,7 @@
 // ---------------------------------------------------------------------------
 // MQTT broker (Raspberry Pi rodando Mosquitto)
 // ---------------------------------------------------------------------------
-#define MQTT_BROKER_HOST   "raspberry-pi-labproc.local"
+#define MQTT_BROKER_HOST   "raspberry-pi-labproc-4.local"
 #define MQTT_BROKER_PORT   1883
 #define MQTT_RECONNECT_MS  3000
 

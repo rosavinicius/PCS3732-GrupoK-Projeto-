@@ -4,6 +4,10 @@ import requests
 import random
 from datetime import datetime, timedelta
 
+# Para rodar localmente, instale as dependências e execute:
+# pip install streamlit pandas requests
+# streamlit run dashboard.py
+
 # ==========================================
 # Configurações da Página e Variáveis Globais
 # ==========================================
@@ -124,13 +128,16 @@ with st.sidebar:
     st.divider()
     st.subheader("💧 Controle de Irrigação")
     
-    # Usa o min_moisture da planta como threshold padrão se existir
-    default_threshold = selected_plant["min_moisture"] if selected_plant else 40.0
-    
-    new_threshold = st.slider("Limiar de Umidade (%)", min_value=0, max_value=100, value=int(default_threshold))
-    
-    if st.button("Salvar Limiar", use_container_width=True):
-        set_threshold(selected_plant["id"], new_threshold)
+    if selected_plant:
+        # Usa o min_moisture da planta como threshold padrão se existir
+        default_threshold = selected_plant["min_moisture"]
+        new_threshold = st.slider("Limiar de Umidade (%)", min_value=0, max_value=100, value=int(default_threshold))
+        
+        if st.button("Salvar Limiar", use_container_width=True):
+            set_threshold(selected_plant["id"], new_threshold)
+    else:
+        st.warning("Este dispositivo não possui uma Planta associada no Banco de Dados.")
+        new_threshold = 40
 
 # --- ÁREA PRINCIPAL ---
 if not selected_plant:
