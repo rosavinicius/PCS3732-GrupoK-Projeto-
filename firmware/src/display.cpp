@@ -38,28 +38,7 @@ void begin() {
         LCD_SCL
     );
 
-    // ==========================================
-    // INICIO DO SCANNER I2C
-    // ==========================================
-    byte error, address;
-    int nDevices = 0;
-    Serial.println("[Scanner I2C] Varrendo barramento...");
-    for(address = 1; address < 127; address++ ) {
-        Wire.beginTransmission(address);
-        error = Wire.endTransmission();
-        if (error == 0) {
-            Serial.print("[Scanner I2C] Dispositivo encontrado no endereco 0x");
-            if (address < 16) Serial.print("0");
-            Serial.println(address, HEX);
-            nDevices++;
-        }
-    }
-    if (nDevices == 0) {
-        Serial.println("[Scanner I2C] Nenhum dispositivo I2C encontrado!");
-    }
-    // ==========================================
-    // FIM DO SCANNER I2C
-    // ==========================================
+    delay(1000); // aguarda o barramento estabilizar
 
     lcd.init();
 
