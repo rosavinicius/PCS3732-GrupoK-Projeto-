@@ -45,6 +45,18 @@ class Base(DeclarativeBase):
 
 
 # ============================================================
+# Importa os modelos para registrar as tabelas no metadata
+# ============================================================
+from . import models  # noqa: E402,F401
+
+
+# ============================================================
+# Garante que as tabelas sejam criadas automaticamente
+# ============================================================
+Base.metadata.create_all(bind=engine)
+
+
+# ============================================================
 # Dependency para FastAPI
 # ============================================================
 
