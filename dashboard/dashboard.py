@@ -874,8 +874,11 @@ if not isinstance(
 # AGORA selected_plant É GARANTIDAMENTE UM DICT
 # ============================================================
 
-plant_id = selected_plant.get(
-    "id"
+plant_id = safe_int(
+    selected_plant.get(
+        "id"
+    ),
+    None
 )
 
 if plant_id is None:
@@ -889,7 +892,7 @@ if plant_id is None:
 
 plant_name = selected_plant.get(
     "name"
-)
+) if isinstance(selected_plant, dict) else None
 
 if plant_name is None:
 
