@@ -43,15 +43,15 @@
 // ---------------------------------------------------------------------------
 // Comportamento
 // ---------------------------------------------------------------------------
-#define SENSOR_READ_INTERVAL_MS   10000   // lê e publica sensores a cada 10s
-#define DISPLAY_UPDATE_INTERVAL_MS 1000
+#define SENSOR_READ_INTERVAL_MS   5000   // lê e publica sensores a cada 10s
+#define DISPLAY_UPDATE_INTERVAL_MS 5000
 #define DEFAULT_HUMIDITY_THRESHOLD 30.0f  // usado só se nada estiver salvo na flash
 #define PUMP_HYSTERESIS_PERCENT    3.0f   // evita a bomba ligar/desligar em flapping
 #define MAX_PUMP_TIME  60000              // 60 segundos
 
 // Calibração do sensor de umidade capacitivo (ajustar após teste no solo seco/molhado)
-#define SOIL_MOISTURE_RAW_DRY   3000
-#define SOIL_MOISTURE_RAW_WET   1200
+#define SOIL_MOISTURE_RAW_DRY   4095
+#define SOIL_MOISTURE_RAW_WET   1000
 
 // Pump relay: HIGH = ligado, LOW = desligado (inverso do relé)
 #define PUMP_ON_LEVEL  HIGH
