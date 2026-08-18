@@ -904,8 +904,10 @@ if plant_id is None:
 
     st.stop()
 
-plant_name = selected_plant.get(
-    "name"
+plant_name = (
+    selected_plant.get("name")
+    if isinstance(selected_plant, dict)
+    else None
 )
 
 if plant_name is None:
