@@ -10,9 +10,10 @@ if str(PROJECT_ROOT) not in sys.path:
 
 import paho.mqtt.client as mqtt
 
+from backend.src.crud.devices import create_device, get_device_by_client_id, update_device_status
 from backend.src.crud.sensors import create_sensor_reading
 from backend.src.db.database import SessionLocal
-from backend.src.db.schemas import SensorReadingCreate
+from backend.src.db.schemas import DeviceCreate, DeviceStatus, SensorReadingCreate
 
 # Configuração de Logs
 logging.basicConfig(
@@ -99,11 +100,32 @@ def on_message(client, userdata, msg):
             temperatura = doc.get("temperature", 0.0)  # Caso não venha leitura de temp
 
             if umidade is not None:
-                salvar_no_banco(
-                    planta_id=device_id,
-                    umidade=float(umidade),
-                    temperatura=float(temperatura)
-                )
+                db = SessionLocal()
+                try:
+                    device = get_device_by_client_id(db, device_id)
+                    if not device:
+                        logging.info(f"Device MQTT desconhecido, criando automaticamente: {device_id}")
+                        device = create_device(
+                            db,
+                            DeviceCreate(
+                                mqtt_client_id=device_id,
+                                name=f"Device {device_id}",
+                                ip=None,
+                                firmware=None,
+                            )
+                        )
+                        logging.info(f"Device criado: {device.id} / {device.mqtt_client_id}")
+
+                    salvar_no_banco(
+                        planta_id=device_id,
+                        umidade=float(umidade),
+                        temperatura=float(temperatura)
+                    )
+                except Exception as exc:
+                    db.rollback()
+                    logging.error(f"Erro ao criar device ou salvar leitura para {device_id}: {exc}")
+                finally:
+                    db.close()
             else:
                 logging.warning(f"Payload de sensores inválido de ESP {device_id}: {payload_str}")
 
