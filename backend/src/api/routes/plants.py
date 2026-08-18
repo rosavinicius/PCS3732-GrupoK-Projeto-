@@ -1,4 +1,5 @@
 import json
+from typing import List
 import paho.mqtt.client as mqtt
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -30,7 +31,7 @@ def create_plant(
 
 @router.get(
     "/",
-    response_model=list[schemas.PlantResponse]
+    response_model=List[schemas.PlantResponse]
 )
 def read_plants(
     skip: int = 0,
