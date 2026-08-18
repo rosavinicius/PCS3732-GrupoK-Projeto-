@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from api.routes import (
     plants,
     devices,
-    readings,
+    sensors,
     irrigation,
 )
 
@@ -19,7 +19,7 @@ api_router.include_router(
 )
 
 api_router.include_router(
-    readings.router
+    sensors.router
 )
 
 api_router.include_router(
