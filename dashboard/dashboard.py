@@ -887,22 +887,11 @@ if not isinstance(
 # AGORA selected_plant É GARANTIDAMENTE UM DICT
 # ============================================================
 
-if not isinstance(selected_plant, dict):
-
-    st.error(
-        "⚠️ Nenhuma planta válida está associada ao dispositivo selecionado."
-    )
-
-    st.info(
-        "Verifique no banco de dados se existe uma planta "
-        "com `device_id` igual ao `id` do dispositivo."
-    )
-
-    st.stop()
-
 plant_id = safe_int(
-    selected_plant.get(
-        "id"
+    (
+        selected_plant.get("id")
+        if isinstance(selected_plant, dict)
+        else None
     ),
     None
 )
