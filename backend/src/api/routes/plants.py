@@ -13,6 +13,75 @@ router = APIRouter(
     tags=["Plants"]
 )
 
+# ============================================================
+# PLANTS CRUD
+# ============================================================
+
+@router.post(
+    "/",
+    response_model=schemas.PlantResponse
+)
+def create_plant(
+    plant: schemas.PlantCreate,
+    db: Session = Depends(get_db)
+):
+    return plants.create_plant(db, plant)
+
+
+@router.get(
+    "/",
+    response_model=list[schemas.PlantResponse]
+)
+def read_plants(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db)
+):
+    return plants.get_plants(db, skip=skip, limit=limit)
+
+
+@router.get(
+    "/{plant_id}",
+    response_model=schemas.PlantResponse
+)
+def read_plant(
+    plant_id: str,
+    db: Session = Depends(get_db)
+):
+    plant = plants.get_plant(db, plant_id)
+    if not plant:
+        raise HTTPException(status_code=404, detail="Planta não encontrada")
+    return plant
+
+
+@router.patch(
+    "/{plant_id}"
+)
+def update_plant(
+    plant_id: str,
+    plant_update: schemas.PlantUpdate,
+    db: Session = Depends(get_db)
+):
+    plant = plants.update_plant(db, plant_id, plant_update)
+    if not plant:
+        raise HTTPException(status_code=404, detail="Planta não encontrada")
+    return plant
+
+
+@router.delete(
+    "/{plant_id}",
+    response_model=schemas.PlantResponse
+)
+def delete_plant(
+    plant_id: str,
+    db: Session = Depends(get_db)
+):
+    plant = plants.delete_plant(db, plant_id)
+    if not plant:
+        raise HTTPException(status_code=404, detail="Planta não encontrada")
+    return plant
+
+
 # 1. Definimos um schema apenas para a requisição de Threshold
 class ThresholdUpdate(BaseModel):
     min_moisture: float
