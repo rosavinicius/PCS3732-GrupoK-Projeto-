@@ -154,3 +154,30 @@ def delete_reading(
     db.commit()
 
     return reading
+
+
+# ============================================================
+# UPDATE
+# ============================================================
+
+def update_readings_plant_id(
+    db: Session,
+    old_plant_id: str,
+    new_plant_id: str
+):
+    """
+    Atualiza o plant_id de leituras antigas.
+    
+    Útil quando uma planta é associada a um dispositivo
+    que já tinha leituras salvas com mqtt_client_id incorreto.
+    """
+
+    updated_count = (
+        db.query(models.SensorReading)
+        .filter(models.SensorReading.plant_id == old_plant_id)
+        .update({"plant_id": new_plant_id})
+    )
+
+    db.commit()
+
+    return updated_count

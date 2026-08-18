@@ -2,6 +2,8 @@ from sqlalchemy.orm import Session
 
 from db import models
 from db import schemas
+from crud.sensors import update_readings_plant_id
+from crud.devices import get_device
 
 
 # ============================================================
@@ -27,6 +29,18 @@ def create_plant(
     db.add(db_plant)
     db.commit()
     db.refresh(db_plant)
+
+    # Atualiza leituras antigas que podem ter sido salvas
+    # com mqtt_client_id ao invés do plant_id correto
+    device = get_device(db, plant.device_id)
+    if device and device.mqtt_client_id:
+        updated = update_readings_plant_id(
+            db=db,
+            old_plant_id=device.mqtt_client_id,
+            new_plant_id=db_plant.id
+        )
+        if updated > 0:
+            print(f"[INFO] {updated} leituras antigas atualizadas para plant_id={db_plant.id}")
 
     return db_plant
 
