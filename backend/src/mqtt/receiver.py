@@ -3,10 +3,10 @@ import logging
 
 import paho.mqtt.client as mqtt
 
-from backend.src.crud.devices import get_device_by_client_id, update_device_status
+from backend.src.crud.devices import create_device, get_device_by_client_id, update_device_status
 from backend.src.crud.sensors import create_sensor_reading
 from backend.src.db.database import SessionLocal
-from backend.src.db.schemas import DeviceStatus, SensorReadingCreate
+from backend.src.db.schemas import DeviceCreate, DeviceStatus, SensorReadingCreate
 
 # Para rodar localmente, instale as dependências e execute:
 # pip install paho-mqtt
@@ -55,8 +55,15 @@ def _save_sensor_payload(mqtt_client_id: str, payload_str: str):
     try:
         device = get_device_by_client_id(db, mqtt_client_id)
         if not device:
-            logger.warning(f"Dispositivo MQTT não cadastrado no banco: {mqtt_client_id}")
-            return
+            logger.info(f"Dispositivo MQTT não cadastrado no banco, criando: {mqtt_client_id}")
+            device_payload = DeviceCreate(
+                mqtt_client_id=mqtt_client_id,
+                name=f"Device {mqtt_client_id}",
+                ip=None,
+                firmware=None,
+            )
+            device = create_device(db, device_payload)
+            logger.info(f"Device criado automaticamente: id={device.id} mqtt_client_id={device.mqtt_client_id}")
 
         if not device.plant:
             logger.warning(f"Dispositivo sem planta associada: {mqtt_client_id}")
