@@ -26,7 +26,7 @@ services:
       MQTT_BROKER_HOST: mosquitto
       MQTT_BROKER_PORT: 1883
     env_file:
-      - ../../.env
+      - ../.env
     volumes:
       - backend-db:/app/data
     command: ["uvicorn", "src.app:app", "--host", "0.0.0.0", "--port", "3000"]
