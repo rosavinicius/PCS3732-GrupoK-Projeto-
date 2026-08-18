@@ -116,11 +116,14 @@ def on_message(client, userdata, msg):
                         )
                         logging.info(f"Device criado: {device.id} / {device.mqtt_client_id}")
 
-                    salvar_no_banco(
-                        planta_id=device_id,
-                        umidade=float(umidade),
-                        temperatura=float(temperatura)
-                    )
+                    if not device.plant:
+                        logging.warning(f"Dispositivo sem planta associada: {device_id}")
+                    else:
+                        salvar_no_banco(
+                            planta_id=device.plant.id,
+                            umidade=float(umidade),
+                            temperatura=float(temperatura)
+                        )
                 except Exception as exc:
                     db.rollback()
                     logging.error(f"Erro ao criar device ou salvar leitura para {device_id}: {exc}")
