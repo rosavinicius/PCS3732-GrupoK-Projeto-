@@ -21,7 +21,7 @@ st.set_page_config(
 # CONFIGURAÇÕES GERAIS
 # ============================================================
 
-API_URL = "http://localhost:8000"
+API_URL = "http://localhost:3000"
 
 # False = usa API real
 # True = usa dados simulados
