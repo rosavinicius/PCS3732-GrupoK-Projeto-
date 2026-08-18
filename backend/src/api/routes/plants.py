@@ -54,39 +54,11 @@ def read_plant(
     return plant
 
 
-@router.patch(
-    "/{plant_id}"
-)
-def update_plant(
-    plant_id: str,
-    plant_update: schemas.PlantUpdate,
-    db: Session = Depends(get_db)
-):
-    plant = plants.update_plant(db, plant_id, plant_update)
-    if not plant:
-        raise HTTPException(status_code=404, detail="Planta não encontrada")
-    return plant
-
-
-@router.delete(
-    "/{plant_id}",
-    response_model=schemas.PlantResponse
-)
-def delete_plant(
-    plant_id: str,
-    db: Session = Depends(get_db)
-):
-    plant = plants.delete_plant(db, plant_id)
-    if not plant:
-        raise HTTPException(status_code=404, detail="Planta não encontrada")
-    return plant
-
-
-# 1. Definimos um schema apenas para a requisição de Threshold
+# Rota específica deve vir ANTES da genérica /{plant_id}
 class ThresholdUpdate(BaseModel):
     min_moisture: float
 
-# 2. Criamos a rota PATCH definitiva
+
 @router.patch("/{plant_id}/threshold")
 def update_plant_threshold(plant_id: str, threshold_data: ThresholdUpdate, db: Session = Depends(get_db)):
     """
@@ -129,3 +101,31 @@ def update_plant_threshold(plant_id: str, threshold_data: ThresholdUpdate, db: S
             }
 
     return {"message": f"Limiar da planta {plant.name} atualizado com sucesso para {threshold_data.min_moisture}%!"}
+
+
+@router.patch(
+    "/{plant_id}"
+)
+def update_plant(
+    plant_id: str,
+    plant_update: schemas.PlantUpdate,
+    db: Session = Depends(get_db)
+):
+    plant = plants.update_plant(db, plant_id, plant_update)
+    if not plant:
+        raise HTTPException(status_code=404, detail="Planta não encontrada")
+    return plant
+
+
+@router.delete(
+    "/{plant_id}",
+    response_model=schemas.PlantResponse
+)
+def delete_plant(
+    plant_id: str,
+    db: Session = Depends(get_db)
+):
+    plant = plants.delete_plant(db, plant_id)
+    if not plant:
+        raise HTTPException(status_code=404, detail="Planta não encontrada")
+    return plant
