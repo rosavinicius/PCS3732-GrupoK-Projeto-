@@ -674,6 +674,19 @@ with st.sidebar:
 
     plants = get_plants()
 
+    if not plants:
+
+        st.warning(
+            "Nenhuma planta encontrada no banco de dados."
+        )
+
+        st.info(
+            "Cadastre pelo backend uma planta que tenha `device_id` "
+            "igual ao ID de um dispositivo existente."
+        )
+
+        st.stop()
+
     # --------------------------------------------------------
     # Encontrar planta associada
     # --------------------------------------------------------
@@ -874,6 +887,19 @@ if not isinstance(
 # AGORA selected_plant É GARANTIDAMENTE UM DICT
 # ============================================================
 
+if not isinstance(selected_plant, dict):
+
+    st.error(
+        "⚠️ Nenhuma planta válida está associada ao dispositivo selecionado."
+    )
+
+    st.info(
+        "Verifique no banco de dados se existe uma planta "
+        "com `device_id` igual ao `id` do dispositivo."
+    )
+
+    st.stop()
+
 plant_id = safe_int(
     selected_plant.get(
         "id"
@@ -889,10 +915,9 @@ if plant_id is None:
 
     st.stop()
 
-
 plant_name = selected_plant.get(
     "name"
-) if isinstance(selected_plant, dict) else None
+)
 
 if plant_name is None:
 

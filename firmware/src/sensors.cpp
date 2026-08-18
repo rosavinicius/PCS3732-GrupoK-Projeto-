@@ -22,6 +22,8 @@ void begin() {
 
 static float readSoilMoisturePercent() {
     int raw = analogRead(PIN_SOIL_MOISTURE);
+    Serial.print("Soil RAW: ");
+    Serial.println(raw);
 
     float rawDry = SOIL_MOISTURE_RAW_DRY;
     float rawWet = SOIL_MOISTURE_RAW_WET;

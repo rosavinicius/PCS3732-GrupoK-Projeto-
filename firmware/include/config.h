@@ -10,7 +10,7 @@
 // ---------------------------------------------------------------------------
 // MQTT broker (Raspberry Pi rodando Mosquitto)
 // ---------------------------------------------------------------------------
-#define MQTT_BROKER_HOST   "raspberry-pi-labproc-4.local"
+#define MQTT_BROKER_HOST   "raspberry-pi-labproc-2.local"
 #define MQTT_BROKER_PORT   1883
 #define MQTT_RECONNECT_MS  3000
 
@@ -51,8 +51,8 @@
 
 // Calibração do sensor de umidade capacitivo (ajustar após teste no solo seco/molhado)
 // Valor RAW alto = seco/ao ar, valor RAW baixo = molhado/na água
-#define SOIL_MOISTURE_RAW_DRY   4095
-#define SOIL_MOISTURE_RAW_WET   1000
+#define SOIL_MOISTURE_RAW_DRY   2900
+#define SOIL_MOISTURE_RAW_WET   600
 
 // Pump relay: HIGH = ligado, LOW = desligado (inverso do relé)
 #define PUMP_ON_LEVEL  HIGH
