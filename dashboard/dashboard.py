@@ -60,6 +60,9 @@ def safe_float(value, default=None):
 def safe_int(value, default=None):
     """
     Converte um valor para int com segurança.
+    
+    Nota: Não use esta função para IDs retornados pela API.
+    A API usa UUIDs (strings), não inteiros.
     """
 
     if value is None:
@@ -70,6 +73,31 @@ def safe_int(value, default=None):
 
     except (TypeError, ValueError):
         return default
+
+
+def format_id_display(id_value):
+    """
+    Formata um UUID para exibição amigável.
+    
+    Exemplos:
+    
+    "550e8400-e29b-41d4-a716-446655440000"
+        -> "550e8400..."
+    
+    None
+        -> "N/A"
+    """
+    
+    if id_value is None:
+        return "N/A"
+    
+    id_str = str(id_value)
+    
+    # Se parece um UUID (tem mais de 16 caracteres), encurta
+    if len(id_str) > 16:
+        return f"{id_str[:8]}..."
+    
+    return id_str
 
 
 def normalize_list(data):
@@ -664,7 +692,7 @@ with st.sidebar:
         options=list(device_options.keys()),
         format_func=lambda device_id: device_options.get(
             device_id,
-            f"Dispositivo {device_id}"
+            f"Dispositivo {format_id_display(device_id)}"
         )
     )
 
@@ -887,13 +915,11 @@ if not isinstance(
 # AGORA selected_plant É GARANTIDAMENTE UM DICT
 # ============================================================
 
-plant_id = safe_int(
-    (
-        selected_plant.get("id")
-        if isinstance(selected_plant, dict)
-        else None
-    ),
-    None
+# Nota: plant_id é uma string UUID, não um inteiro
+plant_id = (
+    selected_plant.get("id")
+    if isinstance(selected_plant, dict)
+    else None
 )
 
 if plant_id is None:
@@ -922,7 +948,7 @@ if plant_name is None:
 st.markdown(
     f"**Visualizando dados da planta:** "
     f"{plant_name} "
-    f"(ID: {plant_id})"
+    f"(ID: {format_id_display(plant_id)})"
 )
 
 
