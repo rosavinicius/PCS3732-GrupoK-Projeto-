@@ -55,7 +55,38 @@ Projetar e construir um sistema automatizado de irrigação de solo que utilize 
 
 ## 4. Arquitetura
 
-O hardware do sistema é centrado no Raspberry Pi 3, que atua como unidade central de processamento. Nele se conectam módulos de irrigação, compostos por ESP32, sensores e atuadores. O Raspberry recebe dados coletados por cada um dos módulos e os enviam via Wi-Fi para uma interface gráfica, permitindo que o usuário acompanhe o estado do sistema e as leituras remotamente. Por meio da mesma interface é possível definir limiares para irrigação para cada um dos módulos, informação esta que é transmitida pelo Raspberry ao ESP responsável pelo módulo de irrigação adequado. Nos módulos, sensores de umidade do solo e de temperatura fazem a leitura do nível de água no substrato da planta e temperatura e enviam o sinal analógico para um conversor analógico-digital, que por sua vez adequa o sinal para ser lido pelos pinos GPIO do ESP32. Para acionar uma das bombas de água, o ESP envia um sinal de controle através do controlador de vazão até a base de um transistor. O transistor funciona como uma chave eletrônica acionada pelo ESP, permitindo chavear a corrente da fonte de alimentação (VCC e GND) para ligar/desligar a bomba com segurança sem sobrecarregar a placa.
+O hardware do sistema é centrado no Raspberry Pi 3B+, que atua como unidade central de processamento, concentrando o broker de mensagens e a aplicação de backend. Nele se conectam, via Wi-Fi, módulos de irrigação compostos por ESP32-C3, sensores e atuadores. Os módulos publicam suas leituras e recebem configurações do Raspberry por meio do protocolo **MQTT**, que roda sobre a rede Wi-Fi/TCP-IP compartilhada por todos os dispositivos; o Raspberry, por sua vez, disponibiliza esses dados para o painel web (Streamlit) por meio de uma API REST consumida via **HTTP**. Por meio da mesma interface é possível definir limiares para irrigação para cada um dos módulos, informação esta que é transmitida pelo Raspberry ao ESP responsável pelo módulo de irrigação adequado. Nos módulos, sensores de umidade do solo e de temperatura fazem a leitura do nível de água no substrato da planta e temperatura e enviam o sinal analógico para um conversor analógico-digital, que por sua vez adequa o sinal para ser lido pelos pinos GPIO do ESP32. Para acionar uma das bombas de água, o ESP envia um sinal de controle através do controlador de vazão até a base de um transistor. O transistor funciona como uma chave eletrônica acionada pelo ESP, permitindo chavear a corrente da fonte de alimentação (VCC e GND) para ligar/desligar a bomba com segurança sem sobrecarregar a placa.
+
+### 4.1 Protocolo de Comunicação
+
+A comunicação entre os componentes do sistema ocorre em duas camadas distintas:
+
+| Camada | Enlace físico | Protocolo de aplicação | Participantes |
+| :--- | :--- | :--- | :--- |
+| Firmware ↔ Backend | Wi-Fi (IEEE 802.11) | **MQTT** (sobre TCP/IP) | ESP32-C3 ↔ Raspberry Pi |
+| Backend ↔ Painel web | Wi-Fi / rede local (IEEE 802.11) | **HTTP/REST** | Raspberry Pi ↔ Dashboard (Streamlit) |
+
+Todos os dispositivos (módulos ESP32-C3 e Raspberry Pi) se conectam à mesma rede Wi-Fi local. O Wi-Fi atua apenas como o meio físico de transporte; a lógica de comunicação entre firmware e backend é implementada sobre o protocolo **MQTT**, enquanto o painel web consome os dados por meio de requisições **HTTP** periódicas à API REST.
+
+**MQTT (Firmware ↔ Backend)**
+
+O MQTT (*Message Queuing Telemetry Transport*) foi escolhido por ser um protocolo de mensageria leve, baseado no modelo publicação/assinatura (*publish/subscribe*) sobre TCP/IP, adequado para dispositivos remotos com banda de rede limitada — características compatíveis com os módulos ESP32-C3 conectados via Wi-Fi.
+
+- **Broker:** Eclipse Mosquitto, containerizado via Docker Compose, executado no Raspberry Pi 3B+.
+- **Tópicos utilizados:**
+
+  | Tópico | Sentido | Conteúdo |
+  | :--- | :--- | :--- |
+  | `devices/{id}/status` | ESP32 → RPi | Mensagem *retained*, com *Last Will and Testament* (LWT) configurado, indicando online/offline do módulo |
+  | `devices/{id}/sensors` | ESP32 → RPi | Leituras periódicas em JSON (umidade, temperatura e carimbo de tempo) |
+  | `devices/{id}/config` | RPi → ESP32 | Mensagem *retained* com o novo limiar de umidade, publicada pela API ao processar uma atualização de configuração |
+
+- **Mecanismos empregados:**
+  - *Publish/Subscribe:* desacopla firmware e backend, permitindo que novos módulos sejam adicionados sem alterar o código do backend.
+  - *QoS (Quality of Service):* garante níveis de confiabilidade na entrega das mensagens.
+  - *Last Will and Testament (LWT):* permite que o broker detecte automaticamente a queda de conexão de um módulo, publicando uma mensagem de status "offline" em seu nome.
+  - *Mensagens retained:* garantem que o último estado conhecido (status do dispositivo, limiar configurado) esteja sempre disponível para novos assinantes.
+
 
 ```mermaid
 graph TD
@@ -96,4 +127,4 @@ stateDiagram-v2
 
 ## 5. Testes
 
-O projeto conta com testes para o backend, conexão de dispositivos e bomba de água. O primeiro cria um banco de dados em memória e testa as rotas; o segundo, checa a criação e listagem dos dispositivos (ESP32's); o terceiro, é um teste unitário que verifica a lógica de funcionamento da bomba para diferentes situações de umidade: abaixo do limiar (bomba deve ligar), entre o intervalo limiar+histerese (bomba deve se manter ligada), e acima da marca limiar+histerese (bomba deve desligar). Além disso, o último teste também simula caso de erro de leitura.   
+O projeto conta com testes para o backend, conexão de dispositivos e bomba de água. O primeiro cria um banco de dados em memória e testa as rotas; o segundo, checa a criação e listagem dos dispositivos (ESP32's); o terceiro, é um teste unitário que verifica a lógica de funcionamento da bomba para diferentes situações de umidade: abaixo do limiar (bomba deve ligar), entre o intervalo limiar+histerese (bomba deve se manter ligada), e acima da marca limiar+histerese (bomba deve desligar). Além disso, o último teste também simula caso de erro de leitura.
